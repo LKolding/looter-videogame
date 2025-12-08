@@ -9,7 +9,37 @@ if (POLICY CMP0141)
   set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>")
 endif()
 
+# Project config starts here
 project ("looter-videogame")
 
+# Enable FetchContent
+include(FetchContent)
+
+
+# --- EnTT ---
+FetchContent_Declare(
+	EnTT
+	GIT_REPOSITORY https://github.com/skypjack/entt.git
+    GIT_TAG main
+)
+FetchContent_MakeAvailable(EnTT)
+
+# --- SDL3 ---
+set(BUILD_SHARED_LIBS OFF)
+set(SDL_STATIC ON)
+
+FetchContent_Declare(
+	SDL3
+	GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
+    GIT_TAG origin/main
+)
+FetchContent_MakeAvailable(SDL3)
+
+
 # Include sub-projects.
-add_subdirectory ("looter-videogame")
+add_subdirectory ("engine")
+add_subdirectory ("game")
+
+# Make executable
+add_executable(videogame_launcher "launcher/launcher.cpp")
+target_link_libraries(videogame_launcher PRIVATE engine game)
