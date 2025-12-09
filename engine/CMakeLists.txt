@@ -5,7 +5,7 @@
 add_library (engine STATIC 
 	"engine.cpp"
 	"engine.hpp" 
- "Systems/MovementSystem.cpp")
+ "Systems/MovementSystem.cpp" "Managers/TextureManager.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET engine PROPERTY CXX_STANDARD 20)

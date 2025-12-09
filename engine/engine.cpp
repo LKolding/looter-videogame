@@ -12,21 +12,22 @@ void Engine::init()
 
 
 // Public
-SDL_AppResult Engine::sdl_init() {
+bool Engine::sdl_init() {
     // --- SDL3 ---
     if (!SDL_Init(SDL_INIT_VIDEO))
     {
         SDL_Log("Couldn't initialize SDL: %s", SDL_GetError());
-        return SDL_APP_FAILURE;
+        return false;
     }
 
     if (!SDL_CreateWindowAndRenderer("Looter", m_window_width, m_window_height, SDL_WINDOW_RESIZABLE, &m_window, &m_renderer))
     {
         SDL_Log("Couldn't create window/renderer: %s", SDL_GetError());
-        return SDL_APP_FAILURE;
+        return false;
     }
-    SDL_SetRenderLogicalPresentation(m_renderer, m_window_width, m_window_height, SDL_LOGICAL_PRESENTATION_LETTERBOX);
 
+    SDL_SetRenderLogicalPresentation(m_renderer, m_window_width, m_window_height, SDL_LOGICAL_PRESENTATION_LETTERBOX);
+    return true;
 }
 
 
@@ -36,13 +37,61 @@ void Engine::update()
 		system(m_registry);
 	}
 };
-void Engine::render() {};
-void Engine::handle_event() {};
 
-// Public interface
-SDL_Window* Engine::getWindow() const {
-	return m_window;
+void Engine::render() 
+{
+    // forEach ( Renderable/ hasComponent<Texture> ): SDL_Render(entity)
+};
+
+void Engine::handle_event() 
+{
+    // Input handling
+};
+
+void Engine::shutdown() 
+{
+    // Save logic goes here
+};
+
+// --- Public interface ---
+
+bool Engine::move_entity(entt::entity e, int dx, int dy) 
+{
+    get_component<Velocity>(e)->dx = dx;
+    get_component<Velocity>(e)->dy = dy;
 }
-SDL_Renderer* Engine::getRenderer() const {
-	return m_renderer;
+
+entt::entity Engine::create_entity() 
+{
+    return m_registry.create();
+}
+
+bool Engine::destroy_entity(entt::entity e) 
+{
+    if (m_registry.destroy(e))
+        return true;
+    else
+        return false;
+}
+
+// func usage: add_component<Transform>(entity, x, y, z); add_component<Health>(entity, 100);
+template<typename T, typename... Args>
+T& Engine::add_component(entt::entity e, Args&&... args) 
+{
+    return m_registry.emplace<T>(e, std::forward<Args>(args)...);
+}
+
+template<typename T>
+bool Engine::remove_component(entt::entity e) 
+{
+    if (m_registry.remove<T>(e))
+        return true;
+    else
+        return false;
+}
+
+template<typename T>
+T* Engine::get_component(entt::entity e) 
+{
+    return m_registry.get<T>(e);
 }

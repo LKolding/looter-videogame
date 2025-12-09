@@ -1,10 +1,17 @@
 #pragma once
 
-struct Position {
+// Interface
+class IComponent {
+public:
+	virtual ~IComponent() = default;
+};
+
+// Implmentations
+struct Position: public IComponent {
 	float x, y;
 };
 
-struct Velocity {
+struct Velocity : public IComponent {
 	float dx, dy;
 };
 
