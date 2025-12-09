@@ -3,13 +3,12 @@
 #include <SDL3/SDL.h>
 #include <unordered_map>
 
-struct TextureID {
-	uint32_t id;
-};
+using TextureID = uint32_t;
+
 
 class TextureManager {
 public:
-	TextureManager(SDL_Renderer* renderer);
+	TextureManager(SDL_Renderer* renderer): m_renderer(renderer) {};
 	
 	SDL_Texture* getTexture(TextureID id);
 

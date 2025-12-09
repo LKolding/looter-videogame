@@ -93,5 +93,5 @@ bool Engine::remove_component(entt::entity e)
 template<typename T>
 T* Engine::get_component(entt::entity e) 
 {
-    return m_registry.get<T>(e);
+    return &m_registry.get<T>(e);
 }
