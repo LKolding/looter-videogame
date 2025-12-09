@@ -8,11 +8,13 @@ public:
 
 // Implmentations
 struct Position: public IComponent {
-	float x, y;
+	float x = 0.0;
+	float y = 0.0;
 };
 
 struct Velocity : public IComponent {
-	float dx, dy;
+	float dx = 0.0;
+	float dy = 0.0;
 };
 
 struct Transform {
