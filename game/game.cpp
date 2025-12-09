@@ -1,13 +1,17 @@
 #include "game.hpp"
 
 
-#define WINDOW_WIDTH 640
-#define WINDOW_HEIGHT 480
-
-
 namespace {
+
+    #define WINDOW_WIDTH 640
+    #define WINDOW_HEIGHT 480
+
     struct AppData {
         Engine engine = Engine("Looter", WINDOW_WIDTH, WINDOW_HEIGHT);
+
+        void game_logic() {
+
+        }
     } AppData;
 }
 
@@ -31,6 +35,8 @@ SDL_AppResult SDL_AppIterate(void* appstate)
 
     AppData.engine.update();
     AppData.engine.render();
+
+    AppData.game_logic();
 
     // add imgui here maybe
 

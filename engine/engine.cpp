@@ -59,6 +59,7 @@ bool Engine::move_entity(entt::entity e, int dx, int dy)
 {
     get_component<Velocity>(e)->dx = dx;
     get_component<Velocity>(e)->dy = dy;
+    return true;
 }
 
 entt::entity Engine::create_entity() 
