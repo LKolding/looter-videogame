@@ -12,42 +12,10 @@ endif()
 # Project config starts here
 project ("looter-videogame")
 
-# Enable FetchContent
-#include(FetchContent)
-
-
-
 # Enable vcpkg
 if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
     set(CMAKE_TOOLCHAIN_FILE "C:/Program Files/Microsoft Visual Studio/18/Community/VC/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
 endif()
-
-# Find packages from vcpkg
-find_package(SDL3 CONFIG REQUIRED)
-find_package(SDL3_image CONFIG REQUIRED)
-find_package(EnTT CONFIG REQUIRED)
-
-
-
-# --- EnTT ---
-#FetchContent_Declare(
-#	EnTT
-#	GIT_REPOSITORY https://github.com/skypjack/entt.git
-#    GIT_TAG main
-#)
-#FetchContent_MakeAvailable(EnTT)
-
-# --- SDL3 ---
-#set(BUILD_SHARED_LIBS OFF)
-#set(SDL_STATIC ON)
-
-#FetchContent_Declare(
-#	SDL3
-#	GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
-#    GIT_TAG origin/main
-#)
-#FetchContent_MakeAvailable(SDL3)
-
 
 # Include sub-projects.
 add_subdirectory ("engine")

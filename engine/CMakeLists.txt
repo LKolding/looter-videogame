@@ -5,11 +5,16 @@
 add_library (engine STATIC 
 	"engine.cpp"
 	"engine.hpp" 
- "Systems/MovementSystem.cpp" "Managers/TextureManager.cpp")
+ "Systems/VelocitySystem.cpp" "Managers/TextureManager.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET engine PROPERTY CXX_STANDARD 20)
 endif()
+
+# Find packages from vcpkg
+find_package(SDL3 CONFIG REQUIRED)
+find_package(SDL3_image CONFIG REQUIRED)
+find_package(EnTT CONFIG REQUIRED)
 
 # idk what this does, and why it's here
 target_include_directories(engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

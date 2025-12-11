@@ -6,7 +6,7 @@
 void Engine::init() 
 {
 	// Add system(s)
-	m_systems.push_back(MovementSystem);
+	m_systems.push_back(VelocitySystem);
 
 }
 
@@ -20,7 +20,7 @@ bool Engine::sdl_init() {
         return false;
     }
 
-    if (!SDL_CreateWindowAndRenderer("Looter", m_window_width, m_window_height, SDL_WINDOW_RESIZABLE, &m_window, &m_renderer))
+    if (!SDL_CreateWindowAndRenderer("Looter", m_window_width, m_window_height, NULL, &m_window, &m_renderer))
     {
         SDL_Log("Couldn't create window/renderer: %s", SDL_GetError());
         return false;
@@ -30,6 +30,9 @@ bool Engine::sdl_init() {
     return true;
 }
 
+void Engine::player_input() {
+
+}
 
 void Engine::update() 
 {

@@ -16,5 +16,5 @@ private:
 	SDL_Renderer* m_renderer = nullptr;
 
 	// Textures
-	std::unordered_map<TextureID, SDL_Texture*> m_textures; // TODO fix this, idk whats wrong
+	std::unordered_map<TextureID, SDL_Texture*> m_textures;
 };

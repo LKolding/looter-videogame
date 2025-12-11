@@ -2,4 +2,4 @@
 #include <entt/entt.hpp>
 #include <components.hpp>
 
-void MovementSystem(entt::registry& registry);
+void VelocitySystem(entt::registry& registry);

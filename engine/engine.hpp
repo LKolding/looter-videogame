@@ -17,7 +17,7 @@
 #include <components.hpp>
 
 // Systems
-#include <Systems/MovementSystem.hpp>
+#include <Systems/VelocitySystem.hpp>
 
 // Managers
 #include <Managers/TextureManager.hpp>
@@ -52,6 +52,7 @@ public:
 	}
 	bool sdl_init();
 
+	void player_input(); // called by AppEvent (when new input registers)
 	void update();		 // called by AppIterate
 	void render();		 // called by AppIterate
 	void handle_event(); // called by AppEvent

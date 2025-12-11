@@ -10,7 +10,15 @@ namespace {
         Engine engine = Engine("Looter", WINDOW_WIDTH, WINDOW_HEIGHT);
 
         void game_logic() {
-
+            // --- game rules...
+            //
+            // collection of functions operating on (Engine& e) ?
+            // Here lives game data that is not "interating" with
+            // game/engine entities, components, systems etc.
+        
+                // TODO
+            // Seperate logic into a struct or smth to have this
+            // file only (mainly) be the sdl callback definitions
         }
     } AppData;
 }
