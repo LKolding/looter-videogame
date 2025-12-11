@@ -15,4 +15,4 @@ endif()
 target_include_directories(engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Install targets
-target_link_libraries(engine PUBLIC SDL3::SDL3 EnTT::EnTT)
+target_link_libraries(engine PUBLIC SDL3::SDL3 $<IF:$<TARGET_EXISTS:SDL3_image::SDL3_image-shared>,SDL3_image::SDL3_image-shared,SDL3_image::SDL3_image-static> EnTT::EnTT)
