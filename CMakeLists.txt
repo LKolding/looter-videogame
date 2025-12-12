@@ -12,11 +12,6 @@ endif()
 # Project config starts here
 project ("looter-videogame")
 
-# Enable vcpkg
-if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
-    set(CMAKE_TOOLCHAIN_FILE "C:/Program Files/Microsoft Visual Studio/18/Community/VC/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
-endif()
-
 # Include sub-projects.
 add_subdirectory ("engine")
 add_subdirectory ("game")
