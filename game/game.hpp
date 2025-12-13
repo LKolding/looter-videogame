@@ -6,6 +6,8 @@
 // --- Engine ---
 #include <engine.hpp>
 
+#include "Factory/EntityFactory.hpp"
+
 // --- SDL3 --- callback declarations
 SDL_AppResult SDL_AppInit(void** appstate, int argc, char** argv);
 SDL_AppResult SDL_AppIterate(void* appstate);

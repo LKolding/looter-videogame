@@ -3,11 +3,20 @@
 
 namespace {
 
-    #define WINDOW_WIDTH 640
-    #define WINDOW_HEIGHT 480
+    #define WINDOW_WIDTH  1920 / 2
+    #define WINDOW_HEIGHT 1080 / 2
 
     struct AppData {
         Engine engine = Engine("Looter", WINDOW_WIDTH, WINDOW_HEIGHT);
+        EntityFactory factory{ engine };
+
+        void init_game() {
+            factory.spawnPlayerEntity(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
+
+            factory.spawnPlayerEntity(100, 100);
+
+            factory.spawnPlayerEntity(WINDOW_WIDTH / 3, WINDOW_HEIGHT / 3);
+        }
 
         void game_logic() {
             // --- game rules...
@@ -19,6 +28,7 @@ namespace {
                 // TODO
             // Seperate logic into a struct or smth to have this
             // file only (mainly) be the sdl callback definitions
+            
         }
     } AppData;
 }
@@ -32,6 +42,8 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char** argv)
     if (!AppData.engine.sdl_init())
         return SDL_APP_FAILURE;
 
+    AppData.init_game();
+
     return SDL_APP_CONTINUE; /* Carry on */
 }
 
@@ -40,11 +52,18 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char** argv)
 // You do not check the event queue in this function (SDL_AppEvent exists for that)
 SDL_AppResult SDL_AppIterate(void* appstate)
 {
+    // Calculate delta time
+    static unsigned int lastTime = lastTime ? lastTime : 0;
+    unsigned int currentTime = SDL_GetTicks();
+    const uint32_t deltaTime = currentTime - lastTime;
+    lastTime = currentTime; // ??? isn't this correct
 
-    AppData.engine.update();
-    AppData.engine.render();
+    AppData.engine.player_input();
 
     AppData.game_logic();
+
+    AppData.engine.update(deltaTime);
+    AppData.engine.render();
 
     // add imgui here maybe
 
@@ -53,7 +72,7 @@ SDL_AppResult SDL_AppIterate(void* appstate)
 
 
 // This will be called whenever an SDL event arrives.
-SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event) 
+SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event)
 {
     if (event->type == SDL_EVENT_QUIT) {
         AppData.engine.shutdown();

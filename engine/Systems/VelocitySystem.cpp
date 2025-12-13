@@ -1,6 +1,6 @@
 #include "VelocitySystem.hpp"
 
-void VelocitySystem(entt::registry& registry) 
+void VelocitySystem(entt::registry& registry, const float dt)
 {
     auto view = registry.view<Position, Velocity>();
 

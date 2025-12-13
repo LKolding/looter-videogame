@@ -11,6 +11,7 @@
 
 // --- SDL3 ---
 #include <SDL3/SDL.h>
+#include <SDL3_image/SDL_image.h>
 
 
 // Components
@@ -18,6 +19,7 @@
 
 // Systems
 #include <Systems/VelocitySystem.hpp>
+#include <Systems/TextureAnimationSystem.hpp>
 
 // Managers
 #include <Managers/TextureManager.hpp>
@@ -30,7 +32,7 @@ private:
 
 	// EnTT
 	entt::registry m_registry;
-	std::vector<std::function<void(entt::registry&)>> m_systems;
+	std::vector<std::function<void(entt::registry&, const float dt)>> m_systems;
 
 	// SDL
 	const char* m_window_title;
@@ -40,7 +42,8 @@ private:
 	SDL_Renderer* m_renderer;
 
 	// Engine
-	TextureManager textureManager { m_renderer };
+	//TextureManager* textureManager;
+	std::unique_ptr<TextureManager> textureManager;
 
 public:
 	Engine(const char* title, const int window_width, const int window_height) : 
@@ -52,11 +55,11 @@ public:
 	}
 	bool sdl_init();
 
-	void player_input(); // called by AppEvent (when new input registers)
-	void update();		 // called by AppIterate
-	void render();		 // called by AppIterate
-	void handle_event(); // called by AppEvent
-	void shutdown();	 // called by AppQuit
+	void player_input();		// called by AppEvent (when new input registers)
+	void update(const float dt);// called by AppIterate
+	void render();				// called by AppIterate
+	void handle_event();		// called by AppEvent
+	void shutdown();			// called by AppQuit
 
 	// Custom systems (non-ecs systems)
 	// render system
@@ -67,20 +70,23 @@ public:
 public:
 
 	// Movement/transforms
-	bool move_entity(entt::entity e, int dx, int dy);
+	bool apply_velocity(entt::entity e, float dx, float dy);
 
 	// Spawn/destroy
 	entt::entity create_entity();
 	bool destroy_entity(entt::entity);
 
-	// Components adding/removing/getting
+
+	// Entity Factory functions (use with caution)
 	template<typename T, typename... Args>
-	T& add_component(entt::entity e, Args&&... args);
+	T& add_component(entt::entity e, Args&&... args) {
+		return m_registry.emplace<T>(e, std::forward<Args>(args)...);
+	};
 
 	template<typename T>
 	bool remove_component(entt::entity e);
 
 	template<typename T>
-	T* get_component(entt::entity e);
+	T& get_component(entt::entity e);
 
 };

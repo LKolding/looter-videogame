@@ -1,0 +1,20 @@
+#pragma once
+
+#include <SDL3/SDL.h>
+#include <entt/entt.hpp>
+
+#include "components.hpp"
+#include "engine.hpp"  // for createEntity()
+#include "Managers/TextureManager.hpp"
+
+
+class EntityFactory {
+private:
+	Engine* m_engine_pointer;
+
+public:
+	EntityFactory(Engine& engine) : m_engine_pointer(&engine) {};
+
+	bool spawnPlayerEntity(float x, float y);
+
+};
