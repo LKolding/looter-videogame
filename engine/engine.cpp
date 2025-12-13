@@ -57,7 +57,7 @@ void Engine::update(const float dt)
 void Engine::render() 
 {
     SDL_RenderClear(m_renderer);
-    ½
+    
     auto view = m_registry.view<Texture, Position>();
     for (auto entity : view)
     {
