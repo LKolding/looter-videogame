@@ -11,11 +11,8 @@ namespace {
         EntityFactory factory{ engine };
 
         void init_game() {
-            factory.spawnPlayerEntity(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
-
             factory.spawnPlayerEntity(100, 100);
 
-            factory.spawnPlayerEntity(WINDOW_WIDTH / 3, WINDOW_HEIGHT / 3);
         }
 
         void game_logic() {
