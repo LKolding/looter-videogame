@@ -8,7 +8,6 @@ void Engine::init()
 	// Add system(s)
 	m_systems.push_back(VelocitySystem);
     m_systems.push_back(TextureAnimationSystem);
-
 }
 
 
@@ -38,15 +37,11 @@ bool Engine::sdl_init() {
     return true;
 }
 
-void Engine::player_input() {
-    // Get keystate of relavant keys
-    // Flag behavior (eg. isMovingRight) ?
-    // Dispatch events?
-    // 
-}
-
 void Engine::update(const float dt)
 {
+    // Update input manager
+    this->inputManager.update();
+
     // Iterate through and call all systems
 	for (auto& system : m_systems) {
 		system(m_registry, dt);
@@ -55,6 +50,7 @@ void Engine::update(const float dt)
 
 void Engine::render() 
 {
+    SDL_SetRenderDrawColorFloat(m_renderer, 210.0f, 110.0f, 130.0f, 255.0f);
     SDL_RenderClear(m_renderer);
     
     auto view = m_registry.view<Texture, Position>();
@@ -99,11 +95,14 @@ void Engine::shutdown()
 
 // --- Public interface ---
 
-bool Engine::apply_velocity(entt::entity e, float dx, float dy)
+bool Engine::apply_velocity(entt::entity e, float dx, float dy, float multiplier)
 {
+    if (!m_registry.valid(e))
+        return false;
+
     auto& velocity = m_registry.get<Velocity>(e);
-    velocity.dx = dx;
-    velocity.dy = dy;
+    velocity.dx = dx * multiplier;
+    velocity.dy = dy * multiplier;
 
     return true;
 }

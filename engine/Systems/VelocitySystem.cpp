@@ -14,7 +14,8 @@ void VelocitySystem(entt::registry& registry, const float dt)
 
         auto& pos = view.get<Position>(entity);
 
-        pos.x += vel.dx;
-        pos.y += vel.dy;
+        pos.x += vel.dx * vel.speed * dt;
+        pos.y += vel.dy * vel.speed * dt;
+
     }
 }

@@ -5,12 +5,14 @@
 add_library (engine STATIC 
 	"engine.cpp"
 	"engine.hpp"
- "Systems/VelocitySystem.cpp"
- "Systems/TextureAnimationSystem.cpp"
- "Managers/TextureManager.cpp"
 
- "Factory/EntityFactory.cpp"
- "Factory/EntityFactory.hpp"
+    "Systems/VelocitySystem.cpp"
+    "Systems/TextureAnimationSystem.cpp"
+
+    "Managers/TextureManager.cpp"
+    "Managers/InputManager.cpp"
+
+    "Factory/EntityFactory.cpp"
   )
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)

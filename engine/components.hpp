@@ -9,6 +9,7 @@ struct Position {
 };
 
 struct Velocity {
+	float speed = 1.0f;
 	float dx = 0.0f;
 	float dy = 0.0f;
 };

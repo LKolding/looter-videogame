@@ -10,8 +10,10 @@ namespace {
         Engine engine = Engine("Looter", WINDOW_WIDTH, WINDOW_HEIGHT);
         EntityFactory factory{ engine };
 
+        entt::entity player_entity;
+
         void init_game() {
-            factory.spawnPlayerEntity(100, 100);
+            this->player_entity = factory.spawnPlayerEntity(100, 100);
 
         }
 
@@ -25,6 +27,12 @@ namespace {
                 // TODO
             // Seperate logic into a struct or smth to have this
             // file only (mainly) be the sdl callback definitions
+            
+            // --- Input ---
+            auto input_state = engine.inputManager.get_input_state();
+            float mult = input_state.is_sprinting ? 1.4f : 1.0f;
+            engine.apply_velocity(this->player_entity, input_state.moveX, input_state.moveY, mult);
+            
             
         }
     } AppData;
@@ -54,8 +62,6 @@ SDL_AppResult SDL_AppIterate(void* appstate)
     unsigned int currentTime = SDL_GetTicks();
     const uint32_t deltaTime = currentTime - lastTime;
     lastTime = currentTime; // ??? isn't this correct
-
-    AppData.engine.player_input();
 
     AppData.game_logic();
 

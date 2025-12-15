@@ -1,11 +1,8 @@
 #include "EntityFactory.hpp"
 #include "components.hpp"
 
-bool EntityFactory::spawnPlayerEntity(float x, float y) {
-	// Return false if engine is dead (for some reason?
-	if (!this->m_engine_pointer)
-		return false;
-
+entt::entity EntityFactory::spawnPlayerEntity(float x, float y) 
+{
 	// Get entity handle
 	auto entity = this->m_engine_pointer->create_entity();
 
@@ -13,6 +10,11 @@ bool EntityFactory::spawnPlayerEntity(float x, float y) {
 	auto& pos = this->m_engine_pointer->add_component<Position>(entity);
 	pos.x = x;
 	pos.y = y;
+
+	auto& vel = this->m_engine_pointer->add_component<Velocity>(entity);
+	vel.speed = 0.2f;
+	vel.dx = 0.0f;
+	vel.dy = 0.0f;
 
 	auto& tex = this->m_engine_pointer->add_component<Texture>(entity);
 	tex.id = 1;
@@ -24,7 +26,7 @@ bool EntityFactory::spawnPlayerEntity(float x, float y) {
 	anim.current_frame_index = 0;
 	anim.time_passed = 0.0f;
 
-	// Return true upon success
-	return true;
+	// Return entity handle upon success
+	return entity;
 
 }

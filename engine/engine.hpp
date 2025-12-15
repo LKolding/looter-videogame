@@ -23,6 +23,7 @@
 
 // Managers
 #include <Managers/TextureManager.hpp>
+#include <Managers/InputManager.hpp>
 
 
 // --- Engine ---
@@ -42,8 +43,10 @@ private:
 	SDL_Renderer* m_renderer;
 
 	// Engine
-	//TextureManager* textureManager;
 	std::unique_ptr<TextureManager> textureManager;
+
+public:
+	InputManager inputManager;
 
 public:
 	Engine(const char* title, const int window_width, const int window_height) : 
@@ -55,7 +58,6 @@ public:
 	}
 	bool sdl_init();
 
-	void player_input();		// called by AppEvent (when new input registers)
 	void update(const float dt);// called by AppIterate
 	void render();				// called by AppIterate
 	void handle_event();		// called by AppEvent
@@ -70,7 +72,7 @@ public:
 public:
 
 	// Movement/transforms
-	bool apply_velocity(entt::entity e, float dx, float dy);
+	bool apply_velocity(entt::entity e, float dx, float dy, float multiplier = 1.0f);
 
 	// Spawn/destroy
 	entt::entity create_entity();
