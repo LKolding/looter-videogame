@@ -1,5 +1,9 @@
 #include "EntityFactory.hpp"
-#include "components.hpp"
+
+
+#define LINK_SPRITESHEET_FILENAME "link_spritesheet.png"
+const std::filesystem::path texture_filename_and_path = std::filesystem::path("assets") / "textures";
+
 
 entt::entity EntityFactory::spawnPlayerEntity(float x, float y) 
 {
@@ -17,13 +21,14 @@ entt::entity EntityFactory::spawnPlayerEntity(float x, float y)
 	vel.dy = 0.0f;
 
 	auto& tex = this->m_engine_pointer->add_component<Texture>(entity);
-	tex.id = 1;
-	tex.src_rect = { 0, 0, 120, 120 };
+	tex.filename = "link_spritesheet.png";
+	tex.src_rect = { 0, 0, 120, 130 };
 
 	auto& anim = this->m_engine_pointer->add_component<TextureAnimation>(entity);
 	anim.total_frames = 3;
-	anim.frame_time = 999;
-	anim.current_frame_index = 0;
+	anim.frame_time = 1000/10;
+	anim.current_animation = 4;  // basically the y coord (tex.h*this)
+	anim.current_frame_index = 0;// and the x coord (tex.w*this)
 	anim.time_passed = 0.0f;
 
 	// Return entity handle upon success

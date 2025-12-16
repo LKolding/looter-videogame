@@ -29,14 +29,14 @@ private:
 
 public:
 	//bool change_input_type(INPUT_TYPE new_input_type);
-
 	void update();
-	InputState& get_input_state();
 
 private:
 	InputState handle_kbm();
 	InputState handle_cntrl();
 
 	InputState current_input_state;
+public:
+	InputState& get_input_state();
 
 };

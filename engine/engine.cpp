@@ -28,8 +28,9 @@ bool Engine::sdl_init() {
     SDL_SetRenderLogicalPresentation(m_renderer, m_window_width, m_window_height, SDL_LOGICAL_PRESENTATION_LETTERBOX);
 
     // Texture manager
-    this->textureManager = std::make_unique<TextureManager>(this->m_renderer);
-    if (!this->textureManager->load_textures()) {
+    this->textureManager->register_renderer(this->m_renderer);
+    if (!this->textureManager->load_textures()) 
+    {
         std::cout << "Couldn't load textures\n";
         return false;
     }
@@ -52,7 +53,8 @@ void Engine::render()
 {
     SDL_SetRenderDrawColorFloat(m_renderer, 210.0f, 110.0f, 130.0f, 255.0f);
     SDL_RenderClear(m_renderer);
-    
+
+    // --- Render entities ---
     auto view = m_registry.view<Texture, Position>();
     for (auto entity : view)
     {
@@ -66,19 +68,15 @@ void Engine::render()
         const SDL_FRect dst_rect = { position_component.x - x_offset, position_component.y - y_offset, texture_component.src_rect.w, texture_component.src_rect.h };
 
         // Check if texture is valid
-        SDL_Texture* texture = this->textureManager->getTexture(texture_component.id);
+        SDL_Texture* texture = this->textureManager->getTexture(texture_component.filename);
         if (!texture) {
-            std::cout << "Error: couldn't get pointer to texture with id: " << texture_component.id << "\n";
+            std::cout << "Error: couldn't get pointer to texture with id: " << texture_component.filename << "\n";
             continue;
         }
         
-        SDL_RenderTexture(
-            m_renderer,
-            texture,
-            src_rect,
-            &dst_rect
-        );
+        SDL_RenderTexture(m_renderer, texture, src_rect, &dst_rect);
     }
+
     // Show renditions (?)
     SDL_RenderPresent(m_renderer);
 };

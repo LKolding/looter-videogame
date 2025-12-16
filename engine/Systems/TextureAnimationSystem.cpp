@@ -1,15 +1,23 @@
 #include "Systems/TextureAnimationSystem.hpp"
 #include "components.hpp"
 
-void TextureAnimationSystem(entt::registry& registry, const float dt) {
-    auto view = registry.view<TextureAnimation>();
+
+void TextureAnimationSystem(entt::registry& registry, const float dt) 
+{
+    auto view = registry.view<Texture, TextureAnimation>();
 
     for (auto entity : view)
     {
+        auto& texture_component = view.get<Texture>(entity);
         auto& animation_component = view.get<TextureAnimation>(entity);
 
-        // Update time_passed
+        // Update time_passed (should use a timestamp instead)
         animation_component.time_passed += dt;
+
+        /// Ensure current_animation matches with the src_rect.y coordinate
+        auto tex_height = texture_component.src_rect.h;
+        auto cur_animat = animation_component.current_animation;
+        texture_component.src_rect.y = cur_animat * tex_height;
 
         // Early exit if frame is still supposed to appear
         if (animation_component.time_passed < animation_component.frame_time)

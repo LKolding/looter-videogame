@@ -6,9 +6,10 @@
     "sdl3-image",
     {
       "name": "sdl3-image",
-      "features": ["png"]
+      "features": [ "png" ]
     },
-    "entt"
+    "entt",
+    "nlohmann-json"
   ],
   "builtin-baseline": "5422eb983d4ca8bc4851ac9771d6e74554efc5c8"
 }

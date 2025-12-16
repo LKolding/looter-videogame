@@ -1,48 +1,48 @@
 #include "TextureManager.hpp"
 
+// I don't use this, do I?
 void TextureManager::register_renderer(SDL_Renderer* ren) 
 {
 	this->m_renderer = ren;
 }
 
-bool TextureManager::load_textures() 
+
+bool TextureManager::load_textures()
 {
-	std::map<TextureID, std::filesystem::path> texture_filename;
+	std::vector<std::filesystem::path> files;
 
-	// Player texture definition
-	texture_filename.insert({ 1, std::filesystem::path("assets") / "textures" / "link_spritesheet.png"});
-
-	// Check if file exists
-	if (!std::filesystem::exists(std::filesystem::path("assets") / "textures" / "link_spritesheet.png"))
+	// iterate files in textures/ and store all .pngs as fs::path
+	for (const auto& entry : std::filesystem::directory_iterator(this->assets_folder_path / "textures")) 
 	{
-		std::cout << "File doesn't exist\n";
-		return false;
+		if (entry.is_regular_file() && entry.path().extension() == ".png") 
+		{
+			files.push_back(entry.path().filename());
+		}
 	}
 
-	// Add all textures
-	for (const auto& [id, path] : texture_filename) {
-		if (!this->addTexture(id, path.string()))
-			return false;  // fail if texture didn't load
+	for (const std::filesystem::path& file : files) 
+	{
+		if (!this->addTexture(file.string())) 
+		{
+			return false;
+		}
 	}
-	
+
 	return true;
 }
 
-SDL_Texture* TextureManager::getTexture(TextureID id) 
-{
-	auto it = m_textures.find(id);
-	return (it != m_textures.end()) ? it->second : nullptr;
-}
 
-bool TextureManager::addTexture(TextureID id, const std::string& filename) {
+bool TextureManager::addTexture(const std::string& filename)
+{
 	// Early exit if texture already exists with id
-	if (this->getTexture(id))
+	if (this->getTexture(filename))
 		return false;
 
 	if (!this->m_renderer)
 		return false;
 
-	auto* texture = IMG_LoadTexture(m_renderer, filename.c_str());
+	auto full_texture_path = this->assets_folder_path / "textures" / filename;
+	auto* texture = IMG_LoadTexture(m_renderer, full_texture_path.string().c_str());
 
 	if (!texture)
 	{
@@ -50,7 +50,15 @@ bool TextureManager::addTexture(TextureID id, const std::string& filename) {
 		return false;
 	}
 
-	m_textures.insert({ id, texture });
+	m_textures.insert({ filename, texture });
 
 	return true;
 }
+
+
+SDL_Texture* TextureManager::getTexture(const std::string& filename)
+{
+	auto it = m_textures.find(filename);
+	return (it != m_textures.end()) ? it->second : nullptr;
+}
+

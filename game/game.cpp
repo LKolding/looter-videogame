@@ -31,6 +31,7 @@ namespace {
             // --- Input ---
             auto input_state = engine.inputManager.get_input_state();
             float mult = input_state.is_sprinting ? 1.4f : 1.0f;
+
             engine.apply_velocity(this->player_entity, input_state.moveX, input_state.moveY, mult);
             
             

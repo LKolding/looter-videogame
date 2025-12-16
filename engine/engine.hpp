@@ -42,10 +42,9 @@ private:
 	SDL_Window* m_window;
 	SDL_Renderer* m_renderer;
 
-	// Engine
-	std::unique_ptr<TextureManager> textureManager;
-
 public:
+	// Engine
+	std::unique_ptr<TextureManager> textureManager = std::make_unique<TextureManager>(this->m_renderer);
 	InputManager inputManager;
 
 public:
@@ -63,10 +62,6 @@ public:
 	void handle_event();		// called by AppEvent
 	void shutdown();			// called by AppQuit
 
-	// Custom systems (non-ecs systems)
-	// render system
-	// audio system
-
 
 // --- PUBLIC INTERFACE
 public:
@@ -80,11 +75,11 @@ public:
 
 
 	// Entity Factory functions (use with caution)
+
 	template<typename T, typename... Args>
 	T& add_component(entt::entity e, Args&&... args) {
 		return m_registry.emplace<T>(e, std::forward<Args>(args)...);
 	};
-
 	template<typename T>
 	bool remove_component(entt::entity e);
 

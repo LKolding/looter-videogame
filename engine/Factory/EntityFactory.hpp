@@ -1,11 +1,13 @@
 #pragma once
 
+#include <filesystem>
+
 #include <SDL3/SDL.h>
 #include <entt/entt.hpp>
 
 #include "components.hpp"
 #include "engine.hpp"  // for createEntity()
-#include "Managers/TextureManager.hpp"
+#include "Managers/TextureManager.hpp" // for TextureID
 
 
 class EntityFactory {
