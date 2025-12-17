@@ -1,6 +1,6 @@
 #include "TextureManager.hpp"
 
-// I don't use this, do I?
+
 void TextureManager::register_renderer(SDL_Renderer* ren) 
 {
 	this->m_renderer = ren;
@@ -11,7 +11,6 @@ bool TextureManager::load_textures()
 {
 	std::vector<std::filesystem::path> files;
 
-	// iterate files in textures/ and store all .pngs as fs::path
 	for (const auto& entry : std::filesystem::directory_iterator(this->assets_folder_path / "textures")) 
 	{
 		if (entry.is_regular_file() && entry.path().extension() == ".png") 
