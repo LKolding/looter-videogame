@@ -21,26 +21,26 @@ InputState& InputManager::get_input_state() {
 }
 
 InputState InputManager::handle_kbm() {
-	const bool* key_states = SDL_GetKeyboardState(NULL);  //<- (should be caching this I think)
+	const bool* key_state = SDL_GetKeyboardState(NULL);  //<- (should be cacheing this I think)
 
 	// Movement
 	float moveX = 0.0f;
 	float moveY = 0.0f;
 	bool is_sprinting = false;
 
-	if (key_states[SDL_SCANCODE_W]) {
+	if (key_state[SDL_SCANCODE_W]) {
 		moveY = -1.0f; // up
 	}
-	if (key_states[SDL_SCANCODE_A]) {
+	if (key_state[SDL_SCANCODE_A]) {
 		moveX = -1.0f; // left
 	}
-	if (key_states[SDL_SCANCODE_S]) {
+	if (key_state[SDL_SCANCODE_S]) {
 		moveY = 1.0f;  // down
 	}
-	if (key_states[SDL_SCANCODE_D]) {
+	if (key_state[SDL_SCANCODE_D]) {
 		moveX = 1.0f;  // right
 	}
-	if (key_states[SDL_SCANCODE_LSHIFT]) {
+	if (key_state[SDL_SCANCODE_LSHIFT]) {
 		is_sprinting = true; // shift (sprint)
 	}
 
@@ -49,12 +49,11 @@ InputState InputManager::handle_kbm() {
 		moveX *= 0.707;
 		moveY *= 0.707;
 	}
-
+	
 	// Shooting
 	bool did_shoot = false;
-
 	float mouse_x, mouse_y;
-	auto mouse_state = SDL_GetMouseState(&mouse_x, &mouse_y); //<- should be caching this as well 
+	auto mouse_state = SDL_GetMouseState(&mouse_x, &mouse_y); //<- should be caching this as well
 
 	if (mouse_state & SDL_BUTTON_MASK(SDL_BUTTON_LEFT)) {
 		did_shoot = true;
@@ -64,7 +63,7 @@ InputState InputManager::handle_kbm() {
 		return InputState(); // empty input
 	}
 	else {
-		InputState input{ moveX, moveY, is_sprinting, mouse_x, mouse_y, did_shoot }; //<- the "x / y" is crazy and (obviously) wont work, but idk what to do
+		InputState input{ moveX, moveY, is_sprinting, mouse_x, mouse_y, did_shoot };
 		return input;
 	}
 
