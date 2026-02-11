@@ -1,14 +1,14 @@
-#include "game.hpp"
+// Entry point for the game client (alongside with the engine)
 
+#include "main.hpp"
 
 namespace {
 
-    #define WINDOW_WIDTH  1920 / 2
-    #define WINDOW_HEIGHT 1080 / 2
-
     struct AppData {
-        Engine engine = Engine("Looter", WINDOW_WIDTH, WINDOW_HEIGHT);
+        Engine engine = Engine();
         EntityFactory factory{ engine };
+
+        Client client = Client(1920/2, 1080/2, "looter");
 
         entt::entity player_entity;
 
@@ -17,25 +17,6 @@ namespace {
 
         }
 
-        void game_logic() {
-            // --- game rules...
-            //
-            // collection of functions operating on (Engine& e) ?
-            // Here lives game data that is not "interating" with
-            // game/engine entities, components, systems etc.
-        
-                // TODO
-            // Seperate logic into a struct or smth to have this
-            // file only (mainly) be the sdl callback definitions
-            
-            // --- Input ---
-            auto input_state = engine.inputManager.get_input_state();
-            float mult = input_state.is_sprinting ? 1.4f : 1.0f;
-
-            engine.apply_velocity(this->player_entity, input_state.moveX, input_state.moveY, mult);
-            
-            
-        }
     } AppData;
 }
 
@@ -45,8 +26,8 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char** argv)
 {
     SDL_SetAppMetadata("Looter arcade", "1.0", "com.lkolding.looter");
 
-    if (!AppData.engine.sdl_init())
-        return SDL_APP_FAILURE;
+    // if (!AppData.client.sdl_init())
+    //     return SDL_APP_FAILURE;
 
     AppData.init_game();
 
@@ -64,10 +45,12 @@ SDL_AppResult SDL_AppIterate(void* appstate)
     const uint32_t deltaTime = currentTime - lastTime;
     lastTime = currentTime; // ??? isn't this correct
 
-    AppData.game_logic();
-
+    // Update engine & client
     AppData.engine.update(deltaTime);
-    AppData.engine.render();
+    AppData.client.update();
+
+    // Render
+    AppData.client.render(AppData.engine.get_render_items());
 
     // add imgui here maybe
 

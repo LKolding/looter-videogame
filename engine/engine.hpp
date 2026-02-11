@@ -21,47 +21,30 @@
 #include <Systems/VelocitySystem.hpp>
 #include <Systems/TextureAnimationSystem.hpp>
 
-// Managers
-#include <Managers/TextureManager.hpp>
-#include <Managers/InputManager.hpp>
+#include "../common/RenderItem.hpp" // ????
 
 
 // --- Engine ---
 class Engine {
 private:
-	void init();  // called by constructor
+	void init_systems();  // called by constructor
 
 	// EnTT
 	entt::registry m_registry;
 	std::vector<std::function<void(entt::registry&, const float dt)>> m_systems;
 
-	// SDL
-	const char* m_window_title;
-	const int m_window_width;
-	const int m_window_height;
-	SDL_Window* m_window;
-	SDL_Renderer* m_renderer;
-
 public:
-	// Engine
-	std::unique_ptr<TextureManager> textureManager = std::make_unique<TextureManager>(this->m_renderer);
-	InputManager inputManager;
-
-public:
-	Engine(const char* title, const int window_width, const int window_height) : 
-		m_window_width(window_width), 
-		m_window_height(window_height), 
-		m_window_title(title)
+	Engine()
 	{
-		this->init();
+		this->init_systems();
 	}
-	bool sdl_init();
 
 	void update(const float dt);// called by AppIterate
-	void render();				// called by AppIterate
 	void handle_event();		// called by AppEvent
 	void shutdown();			// called by AppQuit
 
+	// Rendering of internal entities
+	std::vector<RenderItem> get_render_items(void) const;
 
 // --- PUBLIC INTERFACE
 public:

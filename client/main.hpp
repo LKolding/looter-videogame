@@ -4,7 +4,8 @@
 #include <SDL3/SDL.h>
 
 // --- Engine ---
-#include <engine.hpp>
+#include "engine.hpp"
+#include "client.hpp"
 
 #include "Factory/EntityFactory.hpp"
 

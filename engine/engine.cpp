@@ -3,7 +3,7 @@
 // --- Engine ---
 
 // Private
-void Engine::init() 
+void Engine::init_systems() 
 {
 	// Add system(s)
 	m_systems.push_back(VelocitySystem);
@@ -12,73 +12,13 @@ void Engine::init()
 
 
 // Public
-bool Engine::sdl_init() {
-    if (!SDL_Init(SDL_INIT_VIDEO))
-    {
-        SDL_Log("Couldn't initialize SDL: %s", SDL_GetError());
-        return false;
-    }
-
-    if (!SDL_CreateWindowAndRenderer("Looter", m_window_width, m_window_height, SDL_WINDOW_RESIZABLE, &m_window, &m_renderer))
-    {
-        SDL_Log("Couldn't create window/renderer: %s", SDL_GetError());
-        return false;
-    }
-
-    SDL_SetRenderLogicalPresentation(m_renderer, m_window_width, m_window_height, SDL_LOGICAL_PRESENTATION_LETTERBOX);
-
-    // Texture manager
-    this->textureManager->register_renderer(this->m_renderer);
-    if (!this->textureManager->load_textures()) 
-    {
-        std::cout << "Couldn't load textures\n";
-        return false;
-    }
-
-    return true;
-}
-
 void Engine::update(const float dt)
 {
-    // Update input manager
-    this->inputManager.update();
 
     // Iterate through and call all systems
 	for (auto& system : m_systems) {
 		system(m_registry, dt);
 	}
-};
-
-void Engine::render() 
-{
-    SDL_SetRenderDrawColorFloat(m_renderer, 210.0f, 110.0f, 130.0f, 255.0f);
-    SDL_RenderClear(m_renderer);
-
-    // --- Render entities ---
-    auto view = m_registry.view<Texture, Position>();
-    for (auto entity : view)
-    {
-        auto& position_component = view.get<Position>(entity);
-        auto& texture_component  = view.get<Texture>(entity);
-
-        const float x_offset = texture_component.src_rect.w / 2;
-        const float y_offset = texture_component.src_rect.h / 2;
-
-        const SDL_FRect *src_rect= &texture_component.src_rect;
-        const SDL_FRect dst_rect = { position_component.x - x_offset, position_component.y - y_offset, texture_component.src_rect.w, texture_component.src_rect.h };
-
-        // Check if texture is valid
-        SDL_Texture* texture = this->textureManager->getTexture(texture_component.filename);
-        if (!texture) {
-            std::cout << "Error: couldn't get pointer to texture with id: " << texture_component.filename << "\n";
-            continue;
-        }
-        
-        SDL_RenderTexture(m_renderer, texture, src_rect, &dst_rect);
-    }
-
-    // Show renditions (?)
-    SDL_RenderPresent(m_renderer);
 };
 
 void Engine::handle_event() 
@@ -93,12 +33,39 @@ void Engine::shutdown()
 
 // --- Public interface ---
 
+std::vector<RenderItem> Engine::get_render_items(void) const {
+    std::vector<RenderItem> items;
+    // --- Render entities ---
+    auto view = m_registry.view<Texture, Position>();
+    for (auto entity : view)
+    {
+        auto& position_component = view.get<Position>(entity);
+        auto& texture_component  = view.get<Texture>(entity);
+
+        // Add new RenderItem
+        items.push_back({
+            .filename = texture_component.filename,
+            .source_x = texture_component.src_rect.x,
+            .source_y = texture_component.src_rect.y,
+
+            .width = texture_component.src_rect.w,
+            .height = texture_component.src_rect.h,
+        
+            .x = position_component.x,
+            .y = position_component.y
+        });
+    }
+    return items;
+}
+
+
 bool Engine::apply_velocity(entt::entity e, float dx, float dy, float multiplier)
 {
     if (!m_registry.valid(e))
         return false;
 
     auto& velocity = m_registry.get<Velocity>(e);
+
     velocity.dx = dx * multiplier;
     velocity.dy = dy * multiplier;
 

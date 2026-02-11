@@ -14,9 +14,8 @@ project ("looter-videogame")
 
 # Include sub-projects.
 add_subdirectory ("engine")
-add_subdirectory ("game")
-
+add_subdirectory ("client")
 
 # Make executable
 add_executable(videogame_launcher "launcher/launcher.cpp")
-target_link_libraries(videogame_launcher PRIVATE engine game)
+target_link_libraries(videogame_launcher PRIVATE client)

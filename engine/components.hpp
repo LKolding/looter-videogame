@@ -2,6 +2,7 @@
 
 #include <SDL3/SDL.h>
 
+
 struct Position {
 	float x = 0.0f;
 	float y = 0.0f;
