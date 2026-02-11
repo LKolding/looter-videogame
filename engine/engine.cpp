@@ -36,6 +36,8 @@ void Engine::shutdown()
 std::vector<RenderItem> Engine::get_render_items(void) const {
     std::vector<RenderItem> items;
     // --- Render entities ---
+    using namespace Components;
+
     auto view = m_registry.view<Texture, Position>();
     for (auto entity : view)
     {
@@ -62,10 +64,12 @@ std::vector<RenderItem> Engine::get_render_items(void) const {
 bool Engine::apply_velocity(entt::entity e, float dx, float dy, float multiplier)
 {
     if (!m_registry.valid(e))
-        return false;
-
+    return false;
+    
+    // Get reference to Velocity component
+    using namespace Components;
     auto& velocity = m_registry.get<Velocity>(e);
-
+    // Update it
     velocity.dx = dx * multiplier;
     velocity.dy = dy * multiplier;
 

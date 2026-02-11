@@ -1,6 +1,6 @@
 #include "InputManager.hpp"
 
-
+// Determine inputmode, receive new input(s) and update keymap
 void InputManager::update() {
 	switch (this->selected_input) {
 	case KBM:

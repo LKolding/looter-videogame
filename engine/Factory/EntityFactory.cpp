@@ -4,6 +4,7 @@
 #define LINK_SPRITESHEET_FILENAME "link_spritesheet.png"
 const std::filesystem::path texture_filename_and_path = std::filesystem::path("assets") / "textures";
 
+using namespace Components;
 
 entt::entity EntityFactory::spawnPlayerEntity(float x, float y) 
 {

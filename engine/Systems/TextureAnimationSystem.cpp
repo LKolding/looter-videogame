@@ -3,6 +3,8 @@
 
 void TextureAnimationSystem(entt::registry& registry, const float dt) 
 {
+    using namespace Components;
+
     auto view = registry.view<Texture, TextureAnimation>();
 
     for (auto entity : view)

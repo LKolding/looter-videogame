@@ -9,9 +9,6 @@ add_library (engine STATIC
     "Systems/VelocitySystem.cpp"
     "Systems/TextureAnimationSystem.cpp"
 
-    "Managers/TextureManager.cpp"
-    "Managers/InputManager.cpp"
-
     "Factory/EntityFactory.cpp"
   )
 

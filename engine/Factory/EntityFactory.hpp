@@ -7,7 +7,6 @@
 
 #include "components.hpp"
 #include "engine.hpp"  // for createEntity()
-#include "Managers/TextureManager.hpp" // for TextureID
 
 
 class EntityFactory {

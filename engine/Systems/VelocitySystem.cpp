@@ -2,6 +2,8 @@
 
 void VelocitySystem(entt::registry& registry, const float dt)
 {
+    using namespace Components;
+    
     auto view = registry.view<Position, Velocity>();
 
     for (auto entity : view) 

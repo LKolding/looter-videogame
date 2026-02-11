@@ -4,7 +4,6 @@
 
 bool Client::update(void) 
 {
-    // Receive new input(s) and update map    
     m_inputManager->update();
 }
 
