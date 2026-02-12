@@ -1,12 +1,13 @@
 # CMakeList.txt : CMake project for game
 
 add_library(client STATIC 
-    "client.cpp"
-
     "main.cpp"
+    "game.cpp"
+    "client.cpp"
 
     "Managers/TextureManager.cpp"
     "Managers/InputManager.cpp"
+
 )
 
 # Find packages from vcpkg

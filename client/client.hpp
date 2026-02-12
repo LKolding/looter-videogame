@@ -35,6 +35,9 @@ public:
     bool update(void);
     bool render(std::vector<RenderItem> items);
 
+    // Input
+    InputState get_current_input();
+
 private:
     bool sdl_init(void);
 };

@@ -3,10 +3,10 @@
 
 # Add source as library 
 add_library (engine STATIC 
-	"engine.cpp"
-	"engine.hpp"
+	  "engine.cpp"
 
-    "Systems/VelocitySystem.cpp"
+    "Systems/Physics/VelocitySystem.cpp"
+    "Systems/Physics/PositionSystem.cpp"
     "Systems/TextureAnimationSystem.cpp"
 
     "Factory/EntityFactory.cpp"
@@ -19,16 +19,6 @@ endif()
 # Find packages from vcpkg
 find_package(EnTT CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
-
-# Copy assets directory to the build directory
-add_custom_target(copy_assets ALL
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_SOURCE_DIR}/assets
-        ${CMAKE_BINARY_DIR}/assets
-)
-
-# Make sure the executable depends on it
-add_dependencies(engine copy_assets)
 
 # idk what this does, and why it's here
 target_include_directories(engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

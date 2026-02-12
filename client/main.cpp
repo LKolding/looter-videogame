@@ -1,37 +1,37 @@
-// Entry point for the game client (alongside with the engine)
-
 #include "main.hpp"
 
-namespace {
 
-    struct AppData {
-        Engine engine = Engine();
-        EntityFactory factory{ engine };
+struct data
+{
+    Game game;
 
-        Client client = Client(1920/2, 1080/2, "looter");
+    // Calculates and returns delta time
+    const float get_deltaTime(void)
+    {
+        static Uint64 last = SDL_GetPerformanceCounter();
 
-        entt::entity player_entity;
+        Uint64 current = SDL_GetPerformanceCounter();
 
-        void init_game() {
-            this->player_entity = factory.spawnPlayerEntity(100, 100);
+        float dt = (current - last) /
+            (float)SDL_GetPerformanceFrequency();
 
-        }
+        last = current;
 
-    } AppData;
-}
+        if (dt > 0.033f)
+            dt = 0.033f;
+
+        return dt;
+    }
+
+} AppData;
 
 
 // This function should do any one-time startup it requires and then return.
 SDL_AppResult SDL_AppInit(void** appstate, int argc, char** argv) 
 {
     SDL_SetAppMetadata("Looter arcade", "1.0", "com.lkolding.looter");
-
-    // if (!AppData.client.sdl_init())
-    //     return SDL_APP_FAILURE;
-
-    AppData.init_game();
-
-    return SDL_APP_CONTINUE; /* Carry on */
+    AppData.game.init();
+    return SDL_APP_CONTINUE; /* carry on */
 }
 
 
@@ -39,22 +39,8 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char** argv)
 // You do not check the event queue in this function (SDL_AppEvent exists for that)
 SDL_AppResult SDL_AppIterate(void* appstate)
 {
-    // Calculate delta time
-    static unsigned int lastTime = lastTime ? lastTime : 0;
-    unsigned int currentTime = SDL_GetTicks();
-    const uint32_t deltaTime = currentTime - lastTime;
-    lastTime = currentTime; // ??? isn't this correct
-
-    // Update engine & client
-    AppData.engine.update(deltaTime);
-    AppData.client.update();
-
-    // Render
-    AppData.client.render(AppData.engine.get_render_items());
-
-    // add imgui here maybe
-
-    return SDL_APP_CONTINUE;  /* carry on with the program! */
+    AppData.game.logic(AppData.get_deltaTime());
+    return SDL_APP_CONTINUE;  /* carry on */
 }
 
 
@@ -62,10 +48,11 @@ SDL_AppResult SDL_AppIterate(void* appstate)
 SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event)
 {
     if (event->type == SDL_EVENT_QUIT) {
-        AppData.engine.shutdown();
+        if (!AppData.game.quit())
+            return SDL_APP_FAILURE;
         return SDL_APP_SUCCESS;  /* end the program, reporting success to the OS. */
     }
-    return SDL_APP_CONTINUE;  /* carry on with the program! */
+    return SDL_APP_CONTINUE;  /* carry on */
 }
 
 

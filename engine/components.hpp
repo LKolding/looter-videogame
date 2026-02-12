@@ -1,29 +1,47 @@
 #pragma once
 
 #include <SDL3/SDL.h>
+#include "../common/types.hpp"
 
-namespace Components {
-	struct Position {
+namespace Components 
+{
+	struct Position 
+	{
 		float x = 0.0f;
 		float y = 0.0f;
 	};
 	
-	struct Velocity {
-		float speed = 1.0f;
-		float dx = 0.0f;
-		float dy = 0.0f;
+	struct Velocity 
+	{
+		Vec2 value{0.0f, 0.0f};
+		float max = 300.0f;
+	};
+
+	struct Movement
+	{
+		Vec2 value{0.0f, 0.0f};
 	};
 	
-	struct Hitbox {
+	struct MovementStats
+	{
+		float acceleration  = 1200.0f;
+		float decelleration = 1500.0f;
+		float max_speed = 250.0f;
+	};
+
+	struct Hitbox 
+	{
 		float radius = 0.0f;
 	};
 	
-	struct Texture {
+	struct Texture 
+	{
 		std::string filename = "";
 		SDL_FRect src_rect = { 0,0,0,0 };
 	};
 	
-	struct TextureAnimation {
+	struct TextureAnimation 
+	{
 		uint16_t total_frames = 0;//<- if 0, will skip animation until frame_time has passed
 		float frame_time = 1.0f;//<- time in ms(?) per frame
 	

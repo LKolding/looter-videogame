@@ -9,19 +9,15 @@
 // --- EnTT ---
 #include <entt/entt.hpp>
 
-// --- SDL3 ---
-#include <SDL3/SDL.h>
-#include <SDL3_image/SDL_image.h>
-
-
 // Components
 #include <components.hpp>
 
 // Systems
-#include <Systems/VelocitySystem.hpp>
-#include <Systems/TextureAnimationSystem.hpp>
+#include "Systems/Physics/VelocitySystem.hpp"
+#include "Systems/Physics/PositionSystem.hpp"
+#include "Systems/TextureAnimationSystem.hpp"
 
-#include "../common/RenderItem.hpp" // ????
+#include "../common/RenderItem.hpp"
 
 
 // --- Engine ---
@@ -39,9 +35,9 @@ public:
 		this->init_systems();
 	}
 
-	void update(const float dt);// called by AppIterate
-	void handle_event();		// called by AppEvent
-	void shutdown();			// called by AppQuit
+	void update(const float dt); // called by AppIterate
+	void handle_event();		 // called by AppEvent
+	void shutdown();			 // called by AppQuit
 
 	// Rendering of internal entities
 	std::vector<RenderItem> get_render_items(void) const;
@@ -50,7 +46,7 @@ public:
 public:
 
 	// Movement/transforms
-	bool apply_velocity(entt::entity e, float dx, float dy, float multiplier = 1.0f);
+	bool apply_movement(entt::entity e, float dx, float dy);
 
 	// Spawn/destroy
 	entt::entity create_entity();

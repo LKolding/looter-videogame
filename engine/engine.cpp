@@ -7,6 +7,7 @@ void Engine::init_systems()
 {
 	// Add system(s)
 	m_systems.push_back(VelocitySystem);
+    m_systems.push_back(PositionSystem);
     m_systems.push_back(TextureAnimationSystem);
 }
 
@@ -14,7 +15,6 @@ void Engine::init_systems()
 // Public
 void Engine::update(const float dt)
 {
-
     // Iterate through and call all systems
 	for (auto& system : m_systems) {
 		system(m_registry, dt);
@@ -33,9 +33,10 @@ void Engine::shutdown()
 
 // --- Public interface ---
 
-std::vector<RenderItem> Engine::get_render_items(void) const {
+std::vector<RenderItem> Engine::get_render_items(void) const
+{
     std::vector<RenderItem> items;
-    // --- Render entities ---
+    
     using namespace Components;
 
     auto view = m_registry.view<Texture, Position>();
@@ -61,17 +62,18 @@ std::vector<RenderItem> Engine::get_render_items(void) const {
 }
 
 
-bool Engine::apply_velocity(entt::entity e, float dx, float dy, float multiplier)
+bool Engine::apply_movement(entt::entity e, float dx, float dy)
 {
     if (!m_registry.valid(e))
-    return false;
+        return false;
     
-    // Get reference to Velocity component
+    // Get reference to Movement component
     using namespace Components;
-    auto& velocity = m_registry.get<Velocity>(e);
+    auto& movement = m_registry.get<Movement>(e);
+    
     // Update it
-    velocity.dx = dx * multiplier;
-    velocity.dy = dy * multiplier;
+    movement.value.x = dx;
+    movement.value.y = dy;
 
     return true;
 }

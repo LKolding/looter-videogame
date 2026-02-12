@@ -1,14 +1,17 @@
 #pragma once
 
-struct InputState {
+struct InputState 
+{
 	// movement
-	float moveX = 0;
-	float moveY = 0;
-	bool is_sprinting = false;
+	float moveX;
+	float moveY;
+	bool is_sprinting;
+
 	// view direction/aim
-	float lookX = 0;
-	float lookY = 0;
+	float lookX;
+	float lookY;
+
 	// shoot
-	bool player_did_shoot = false;
+	bool player_did_shoot;
 
 };

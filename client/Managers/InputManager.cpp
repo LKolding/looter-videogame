@@ -44,12 +44,6 @@ InputState InputManager::handle_kbm() {
 		is_sprinting = true; // shift (sprint)
 	}
 
-	if ((moveX == 1.0f && moveY == 1.0f) || (moveX == -1.0f && moveY == -1.0f) || (moveX == 1.0f && moveY == -1.0f) || (moveX == -1.0f && moveY == 1.0f) ) {
-		// normalize diagonal movement
-		moveX *= 0.707;
-		moveY *= 0.707;
-	}
-	
 	// Shooting
 	bool did_shoot = false;
 	float mouse_x, mouse_y;

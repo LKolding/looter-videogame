@@ -16,6 +16,17 @@ project ("looter-videogame")
 add_subdirectory ("engine")
 add_subdirectory ("client")
 
+# Copy assets directory to the build directory
+add_custom_target(copy_assets ALL
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/assets
+        ${CMAKE_BINARY_DIR}/assets
+)
+
 # Make executable
 add_executable(videogame_launcher "launcher/launcher.cpp")
+
+# Make sure it depends on assets/
+add_dependencies(client copy_assets)
+
 target_link_libraries(videogame_launcher PRIVATE client)

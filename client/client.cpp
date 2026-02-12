@@ -39,11 +39,11 @@ bool Client::sdl_init(void)
 bool Client::render(std::vector<RenderItem> items) 
 {
     // Background
-    SDL_SetRenderDrawColorFloat(m_renderer, 210.0f, 110.0f, 130.0f, 255.0f);
+    SDL_SetRenderDrawColorFloat(m_renderer, 0.2f, 0.2f, 0.2f, 1.0f);
     SDL_RenderClear(m_renderer);
 
     // Iterate renderables
-    for (auto item : items) 
+    for (auto item : items)
     {
         // Check if texture is valid
         SDL_Texture* texture = m_textureManager->getTexture(item.filename);
@@ -51,9 +51,9 @@ bool Client::render(std::vector<RenderItem> items)
             std::cout << "Error: couldn't get pointer to texture with filename: " << item.filename << "\n";
             continue;
         }
-
-        const float x_offset = item.width  / 2;
-        const float y_offset = item.height / 2;
+        // Offset x & y by texture size * 0.5
+        const float x_offset = item.width  * 0.5;
+        const float y_offset = item.height * 0.5;
 
         const SDL_FRect src_rect { item.source_x, item.source_y, item.width, item.height };
         const SDL_FRect dst_rect { item.x - x_offset, item.y - y_offset, item.width, item.height };
@@ -65,4 +65,9 @@ bool Client::render(std::vector<RenderItem> items)
     // Show renditions (?)
     SDL_RenderPresent(m_renderer);
     return true;
+}
+
+InputState Client::get_current_input()
+{
+    return m_inputManager->get_input_state();
 }

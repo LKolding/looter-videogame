@@ -1,6 +1,7 @@
 #pragma once
 
-struct RenderItem {
+struct RenderItem 
+{
 	std::string filename;
 	float source_x;
 	float source_y;
