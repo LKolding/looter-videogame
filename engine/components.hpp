@@ -1,9 +1,14 @@
 #pragma once
 
 #include <SDL3/SDL.h>
-#include "../common/types.hpp"
+#include <string>
 
-namespace Components 
+#include "../common/types.hpp"
+#include "../common/TextureID.hpp"
+#include "../common/AnimationClip.hpp"
+
+
+namespace Components
 {
 	struct Position 
 	{
@@ -11,13 +16,27 @@ namespace Components
 		float y = 0.0f;
 	};
 	
-	struct Velocity 
+	struct Velocity
 	{
 		Vec2 value{0.0f, 0.0f};
 		float max = 300.0f;
 	};
 
-	struct Movement
+	struct Facing
+	{
+		// Matches sprite sheet row order
+		// 0 = South, 1 = West, 2 = East, 3 = North
+		enum class Direction : uint8_t
+		{
+			South = 0,
+			West  = 1,
+			East  = 2,
+			North = 3
+		};
+		Direction value = Direction::South;
+	};
+
+	struct MovementIntent
 	{
 		Vec2 value{0.0f, 0.0f};
 	};
@@ -25,7 +44,6 @@ namespace Components
 	struct MovementStats
 	{
 		float acceleration  = 1200.0f;
-		float decelleration = 1500.0f;
 		float max_speed = 250.0f;
 	};
 
@@ -33,22 +51,30 @@ namespace Components
 	{
 		float radius = 0.0f;
 	};
-	
-	struct Texture 
-	{
-		std::string filename = "";
-		SDL_FRect src_rect = { 0,0,0,0 };
-	};
-	
-	struct TextureAnimation 
-	{
-		uint16_t total_frames = 0;//<- if 0, will skip animation until frame_time has passed
-		float frame_time = 1.0f;//<- time in ms(?) per frame
-	
-		uint16_t current_frame_index = 0;
-		float time_passed = 0.0f;//<- this is fucking awful, let's be honest
-	
-		uint8_t current_animation = 0;// Amount of "frames"/sprites per sheet can be calculated from TextureComponent (rect w&h/tex.size)
-	};
-}
 
+	struct State
+	{
+        enum class Type : uint8_t { Idle=0, Moving=1, Attacking=2 };
+        Type current = Type::Idle;
+    };
+
+	struct AnimatedTexture
+	{
+		TextureID id = 0;
+		SDL_FRect src_rect = { 0,0,0,0 };
+
+		uint16_t current_frame_index = 0;
+		float time_passed = 0.0f;
+	};
+
+	struct AnimationClipReference
+	{
+		AnimationClip& ref;
+	};
+
+	struct AnimationSetsReference
+	{
+		const std::unordered_map<TextureID, AnimationSet>& ref; 
+	};
+
+}

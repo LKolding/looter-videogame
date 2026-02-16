@@ -1,10 +1,5 @@
 #include "VelocitySystem.hpp"
 
-/*
-This system is calculating acceleration based on Movement and MovementStats.
-Then, it calculates Velocity based on acceleration.
-*/
-
 
 Vec2 approach(const Vec2& current,
               const Vec2& target,
@@ -24,13 +19,14 @@ void VelocitySystem(entt::registry& registry, const float dt)
 {
     using namespace Components;
     
-    auto view = registry.view<Velocity, Movement, MovementStats>();
+    auto view = registry.view<Velocity, MovementIntent, MovementStats, Facing>();
 
     for (auto entity : view)
     {
         auto& vel = view.get<Velocity>(entity);
-        auto& mov = view.get<Movement>(entity);
+        auto& mov = view.get<MovementIntent>(entity);
         auto& stats=view.get<MovementStats>(entity);
+        auto& facing=view.get<Facing>(entity);
 
         // Movement intent
         if (mov.value.length() > 1.0f)
@@ -53,5 +49,13 @@ void VelocitySystem(entt::registry& registry, const float dt)
             targetVelocity,
             stats.acceleration * dt
         );
+
+        // Facing
+        if (vel.value.length() > 0.0f) {
+            if (std::abs(vel.value.x) > std::abs(vel.value.y))
+                facing.value = vel.value.x > 0 ? Facing::Direction::East : Facing::Direction::West;
+            else
+                facing.value = vel.value.y > 0 ? Facing::Direction::South : Facing::Direction::North;
+        }
     }
 }

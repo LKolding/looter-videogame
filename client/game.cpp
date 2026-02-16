@@ -3,7 +3,6 @@
 
 namespace looter
 {
-
     struct data
     {
         Engine engine{};
@@ -12,24 +11,46 @@ namespace looter
 
         entt::entity player_entity;
 
-        void init_game()
-        {
-            this->player_entity = factory.spawnPlayerEntity(100, 100);
-        }
-
-        void update_player_input()
-        {
-            InputState input = client.get_current_input();
-            engine.apply_movement(player_entity, input.moveX, input.moveY);
-        }
-
     } GameData;
+
+    void start_game()
+        {
+            // Get entity handle
+            auto entity = GameData.engine.create_entity();
+            GameData.player_entity = GameData.factory.spawnPlayerEntity(entity, 100, 100);
+
+            // Get texture (for its ID)
+            Components::AnimatedTexture* texture_component = GameData.engine.get_component<Components::AnimatedTexture>(entity);
+            if (!texture_component)
+            {
+                return;
+            }
+
+            // Get animation set
+            AnimationSet* animation_set = GameData.client.get_texture_manager().getAnimationSet(texture_component->id);
+            if (!animation_set)
+            {
+                return;
+            }
+            
+            // Apply
+            auto& animation_clip_reference = animation_set->animations.at(1);
+            GameData.engine.add_component<Components::AnimationClipReference>(entity, animation_clip_reference);
+            GameData.engine.add_component<Components::AnimationSetsReference>(entity, GameData.client.get_texture_manager().getAnimationSets());
+
+        }
+
+    void update_player_input()
+    {
+        InputState input = GameData.client.get_current_input();
+        GameData.engine.apply_movement(GameData.player_entity, input.moveX, input.moveY);
+    }
 }
 
 
 void Game::init()
 {
-    looter::GameData.init_game();
+    looter::start_game();
 }
 
 
@@ -42,12 +63,13 @@ void Game::logic(float dt)
     GameData.client.update();
 
     // Input behavior
-    GameData.update_player_input();
+    update_player_input();
 
     // Render
     GameData.client.render(GameData.engine.get_render_items());
 
     // add imgui here maybe
+
 }
 
 

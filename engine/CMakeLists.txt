@@ -7,6 +7,9 @@ add_library (engine STATIC
 
     "Systems/Physics/VelocitySystem.cpp"
     "Systems/Physics/PositionSystem.cpp"
+
+    "Systems/StateSystem.cpp"
+    "Systems/StateAnimationSystem.cpp"
     "Systems/TextureAnimationSystem.cpp"
 
     "Factory/EntityFactory.cpp"

@@ -1,36 +1,29 @@
 #include "EntityFactory.hpp"
 
 
-#define LINK_SPRITESHEET_FILENAME "link_spritesheet.png"
-const std::filesystem::path texture_filename_and_path = std::filesystem::path("assets") / "textures";
-
-using namespace Components;
-
-entt::entity EntityFactory::spawnPlayerEntity(float x, float y) 
+entt::entity EntityFactory::spawnPlayerEntity(entt::entity entity, float x, float y) 
 {
-	// Get entity handle
-	auto entity = this->m_engine_pointer->create_entity();
+	using namespace Components;
 
-	// Add components
+	// --------------------------
+	// ----- Add components -----
+	// --------------------------
 
 	auto& pos = this->m_engine_pointer->add_component<Position>(entity);
 	pos.x = x;
 	pos.y = y;
 
 	auto& vel = this->m_engine_pointer->add_component<Velocity>(entity);
-	auto& mov = this->m_engine_pointer->add_component<Movement>(entity);
-	auto& acc = this->m_engine_pointer->add_component<MovementStats>(entity);
+	auto& mov = this->m_engine_pointer->add_component<MovementIntent>(entity);
+	auto& spd = this->m_engine_pointer->add_component<MovementStats>(entity);
+	auto& state =this->m_engine_pointer->add_component<State>(entity);
+	auto& facing=this->m_engine_pointer->add_component<Facing>(entity);
 
-	auto& tex = this->m_engine_pointer->add_component<Texture>(entity);
-	tex.filename = "link_spritesheet.png";
-	tex.src_rect = { 0, 0, 120, 130 };
-
-	auto& anim = this->m_engine_pointer->add_component<TextureAnimation>(entity);
-	anim.total_frames = 3;
-	anim.frame_time = 0.3f;
-	anim.current_animation = 4;  // basically the y coord (tex.h*this)
-	anim.current_frame_index = 0;// and the x coord (tex.w*this)
-	anim.time_passed = 0.0f;
+	auto& tex = this->m_engine_pointer->add_component<AnimatedTexture>(entity);
+	tex.id = 1;
+	tex.src_rect = { 0, 0, 64, 64 };
+	tex.current_frame_index = 0;
+	tex.time_passed = 0.0f;
 
 	// Return entity handle upon success
 	return entity;

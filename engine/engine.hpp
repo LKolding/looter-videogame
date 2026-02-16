@@ -15,8 +15,13 @@
 // Systems
 #include "Systems/Physics/VelocitySystem.hpp"
 #include "Systems/Physics/PositionSystem.hpp"
+
+#include "Systems/StateSystem.hpp"
+#include "Systems/StateAnimationSystem.hpp"
+
 #include "Systems/TextureAnimationSystem.hpp"
 
+// Common
 #include "../common/RenderItem.hpp"
 
 
@@ -40,7 +45,7 @@ public:
 	void shutdown();			 // called by AppQuit
 
 	// Rendering of internal entities
-	std::vector<RenderItem> get_render_items(void) const;
+	std::vector<RenderItem> get_render_items(void);
 
 // --- PUBLIC INTERFACE
 public:
@@ -59,10 +64,20 @@ public:
 	T& add_component(entt::entity e, Args&&... args) {
 		return m_registry.emplace<T>(e, std::forward<Args>(args)...);
 	};
-	template<typename T>
-	bool remove_component(entt::entity e);
 
 	template<typename T>
-	T& get_component(entt::entity e);
+	bool remove_component(entt::entity e)
+	{
+		if (m_registry.remove<T>(e))
+			return true;
+		else
+			return false;
+	}
+
+	template<typename T>
+	T* get_component(entt::entity e)
+	{
+		return m_registry.try_get<T>(e);
+	}
 
 };

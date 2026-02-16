@@ -1,8 +1,10 @@
 #pragma once
 
+#include "../common/TextureID.hpp"
+
 struct RenderItem 
 {
-	std::string filename;
+	TextureID id;
 	float source_x;
 	float source_y;
 
