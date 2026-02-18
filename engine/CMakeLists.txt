@@ -22,9 +22,10 @@ endif()
 # Find packages from vcpkg
 find_package(EnTT CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
+find_package(box2d CONFIG REQUIRED)
 
 # idk what this does, and why it's here
 target_include_directories(engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Install targets
-target_link_libraries(engine PUBLIC EnTT::EnTT nlohmann_json::nlohmann_json)
+target_link_libraries(engine PUBLIC EnTT::EnTT nlohmann_json::nlohmann_json box2d::box2d)

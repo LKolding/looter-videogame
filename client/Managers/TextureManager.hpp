@@ -23,8 +23,8 @@ private:
 
 	// Textures
 	TextureID m_nextID = 1;
-	std::unordered_map<std::string, TextureID> m_textureID_by_filename;
-	std::unordered_map<TextureID, SDL_Texture*> m_textures;
+	std::unordered_map<TextureID, SDL_Texture*> m_textures;//<- textures live here
+	std::unordered_map<std::string, TextureID>  m_textureID_by_filename;
 	std::unordered_map<TextureID, AnimationSet> m_animation_sets;
 
 	TextureID addTexture(const std::filesystem::path filename);
@@ -34,13 +34,15 @@ private:
 	bool load_animations();
 
 public:
-	TextureManager() = default;
-
 	void register_renderer(SDL_Renderer* ren);
 	void init(void);
 
 	SDL_Texture* getTexture(const TextureID id);
+	SDL_Texture* getTexture(const std::string filename);//without extension
+
 	AnimationSet* getAnimationSet(const TextureID id);
 	std::unordered_map<TextureID, AnimationSet>& getAnimationSets(void);
+
+	
 
 };

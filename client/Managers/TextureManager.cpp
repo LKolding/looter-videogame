@@ -4,6 +4,8 @@
 // ----- Public -----
 // ------------------
 
+/* Initialization */
+
 void TextureManager::register_renderer(SDL_Renderer* ren) 
 {
 	this->m_renderer = ren;
@@ -21,8 +23,11 @@ void TextureManager::init(void)
 		std::cout << "Couldn't load textures\n";
 	}
 
-	this->load_animations();
+	this->load_animations(); // <- read json
 }
+
+
+/* Textures */
 
 SDL_Texture* TextureManager::getTexture(const TextureID id)
 {
@@ -30,13 +35,25 @@ SDL_Texture* TextureManager::getTexture(const TextureID id)
 	return (it != m_textures.end()) ? it->second : nullptr;
 }
 
+SDL_Texture* TextureManager::getTexture(const std::string filename)
+{
+	auto it = m_textureID_by_filename.find(filename);
+	if (it != m_textureID_by_filename.end())
+	{
+		const TextureID texture_id = it->second;
+		return m_textures.at(texture_id);
+	}
+	return nullptr;
+}
+
+
+/* Animations */
 
 AnimationSet* TextureManager::getAnimationSet(const TextureID id)
 {
 	auto it = m_animation_sets.find(id);
 	return (it != m_animation_sets.end()) ? &it->second : nullptr;
 }
-
 
 std::unordered_map<TextureID, AnimationSet>& TextureManager::getAnimationSets(void)
 {
@@ -47,6 +64,8 @@ std::unordered_map<TextureID, AnimationSet>& TextureManager::getAnimationSets(vo
 // -------------------
 // ----- Private -----
 // -------------------
+
+/* Textures */
 
 bool TextureManager::load_textures()
 {
@@ -73,34 +92,6 @@ bool TextureManager::load_textures()
 	return true;
 }
 
-
-bool TextureManager::load_animations()
-{
-	for (const auto& [filename, id] : this->m_textureID_by_filename)
-	{
-		// Read json
-		auto filename_with_ext = filename + ".json";
-		auto full_file_path = this->assets_folder_path / "animations" / filename_with_ext;
-		std::ifstream f(full_file_path);
-		nlohmann::json data = nlohmann::json::parse(f);
-
-		// Compile list of animation clips
-		AnimationSet animation_set;
-		for (auto& anim : data)
-		{
-			AnimationClip clip;
-			clip.row = anim["row"];
-			clip.frame_count= anim["frame_count"];
-			clip.frame_time = anim["frame_time"];
-			animation_set.animations.push_back(clip);
-		}
-		// Apply
-		this->addAnimationSet(animation_set, id);
-	}
-	return true;
-}
-
-
 TextureID TextureManager::addTexture(const std::filesystem::path filename)
 {
 	if (!this->m_renderer)
@@ -124,6 +115,36 @@ TextureID TextureManager::addTexture(const std::filesystem::path filename)
 	return this->m_nextID - 1;
 }
 
+
+/* Animations */
+
+bool TextureManager::load_animations()
+{
+	for (const auto& [filename, id] : this->m_textureID_by_filename)
+	{
+		// Read json [ nlohmann ]
+		auto filename_with_ext = filename + ".json";
+		auto full_file_path = this->assets_folder_path / "animations" / filename_with_ext;
+		if (!std::filesystem::exists(full_file_path))
+			continue; //<- skip
+		std::ifstream f(full_file_path);
+		nlohmann::json data = nlohmann::json::parse(f);
+
+		// Compile list of animation clips
+		AnimationSet animation_set;
+		for (auto& anim : data)
+		{
+			AnimationClip clip;
+			clip.row = anim["row"];
+			clip.frame_count= anim["frame_count"];
+			clip.frame_time = anim["frame_time"];
+			animation_set.animations.push_back(clip);
+		}
+		// Apply
+		this->addAnimationSet(animation_set, id);
+	}
+	return true;
+}
 
 void TextureManager::addAnimationSet(const AnimationSet set, TextureID id) 
 {

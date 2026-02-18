@@ -51,7 +51,7 @@ public:
 public:
 
 	// Movement/transforms
-	bool apply_movement(entt::entity e, float dx, float dy);
+	bool apply_movement(entt::entity e, const glm::vec2 intent);
 
 	// Spawn/destroy
 	entt::entity create_entity();

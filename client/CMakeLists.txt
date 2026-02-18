@@ -7,7 +7,6 @@ add_library(client STATIC
 
     "Managers/TextureManager.cpp"
     "Managers/InputManager.cpp"
-
 )
 
 # Find packages from vcpkg

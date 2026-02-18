@@ -13,4 +13,6 @@ struct RenderItem
 
 	float x;
 	float y;
+
+	int8_t facing;
 };

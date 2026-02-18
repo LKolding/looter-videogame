@@ -1,7 +1,7 @@
 #include "EntityFactory.hpp"
 
 
-entt::entity EntityFactory::spawnPlayerEntity(entt::entity entity, float x, float y) 
+void EntityFactory::spawnPlayerEntity(entt::entity entity, float x, float y) 
 {
 	using namespace Components;
 
@@ -9,10 +9,7 @@ entt::entity EntityFactory::spawnPlayerEntity(entt::entity entity, float x, floa
 	// ----- Add components -----
 	// --------------------------
 
-	auto& pos = this->m_engine_pointer->add_component<Position>(entity);
-	pos.x = x;
-	pos.y = y;
-
+	auto& pos = this->m_engine_pointer->add_component<Position>(entity, x, y);
 	auto& vel = this->m_engine_pointer->add_component<Velocity>(entity);
 	auto& mov = this->m_engine_pointer->add_component<MovementIntent>(entity);
 	auto& spd = this->m_engine_pointer->add_component<MovementStats>(entity);
@@ -24,8 +21,5 @@ entt::entity EntityFactory::spawnPlayerEntity(entt::entity entity, float x, floa
 	tex.src_rect = { 0, 0, 64, 64 };
 	tex.current_frame_index = 0;
 	tex.time_passed = 0.0f;
-
-	// Return entity handle upon success
-	return entity;
 
 }

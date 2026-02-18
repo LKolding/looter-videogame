@@ -1,7 +1,7 @@
 #include "main.hpp"
 
 
-struct data
+struct AppData
 {
     Game game;
 
@@ -22,15 +22,16 @@ struct data
 
         return dt;
     }
-
-} AppData;
+};
 
 
 // This function should do any one-time startup it requires and then return.
 SDL_AppResult SDL_AppInit(void** appstate, int argc, char** argv) 
 {
+    *appstate = new AppData{};
+    auto* data = static_cast<AppData*>(*appstate);
     SDL_SetAppMetadata("Looter arcade", "1.0", "com.lkolding.looter");
-    AppData.game.init();
+    data->game.start_game();
     return SDL_APP_CONTINUE; /* carry on */
 }
 
@@ -39,7 +40,8 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char** argv)
 // You do not check the event queue in this function (SDL_AppEvent exists for that)
 SDL_AppResult SDL_AppIterate(void* appstate)
 {
-    AppData.game.logic(AppData.get_deltaTime());
+    auto* data = static_cast<AppData*>(appstate);
+    data->game.logic(data->get_deltaTime());
     return SDL_APP_CONTINUE;  /* carry on */
 }
 
@@ -47,8 +49,10 @@ SDL_AppResult SDL_AppIterate(void* appstate)
 // This will be called whenever an SDL event arrives.
 SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event)
 {
+    auto* data = static_cast<AppData*>(appstate);
+
     if (event->type == SDL_EVENT_QUIT) {
-        if (!AppData.game.quit())
+        if (!data->game.quit())
             return SDL_APP_FAILURE;
         return SDL_APP_SUCCESS;  /* end the program, reporting success to the OS. */
     }
@@ -61,4 +65,5 @@ SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event)
 void SDL_AppQuit(void* appstate, SDL_AppResult result) 
 {
     /* SDL will clean up the window/renderer for us. */
+    delete static_cast<AppData*>(appstate);
 }

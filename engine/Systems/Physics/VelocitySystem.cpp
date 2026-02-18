@@ -1,11 +1,15 @@
 #include "VelocitySystem.hpp"
 
 
-Vec2 approach(const Vec2& current,
-              const Vec2& target,
-              float maxDelta)
+const float EPSILON = 0.1f; // tweak to taste
+
+
+glm::vec2 approach(
+    const glm::vec2& current,
+    const glm::vec2& target,
+    const float maxDelta)
 {
-    Vec2 delta = target - current;
+    glm::vec2 delta = target - current;
     float dist = delta.length();
 
     if (dist <= maxDelta || dist == 0.0f)
@@ -18,44 +22,41 @@ Vec2 approach(const Vec2& current,
 void VelocitySystem(entt::registry& registry, const float dt)
 {
     using namespace Components;
-    
     auto view = registry.view<Velocity, MovementIntent, MovementStats, Facing>();
 
-    for (auto entity : view)
+    for (auto [entity, velocity, moveIntent, moveStats, facing]: view.each())
     {
-        auto& vel = view.get<Velocity>(entity);
-        auto& mov = view.get<MovementIntent>(entity);
-        auto& stats=view.get<MovementStats>(entity);
-        auto& facing=view.get<Facing>(entity);
+        // Move intent
+        glm::vec2 intent = moveIntent.value;
+        if (glm::length(intent) > EPSILON)
+            intent = glm::normalize(intent);
 
-        // Movement intent
-        if (mov.value.length() > 1.0f)
-        {
-            mov.value = mov.value.normalized();
+        // Facing (update based on intent)
+        if (glm::length(intent) > 0.f) {
+            if (std::abs(intent.x) > std::abs(intent.y))
+                facing.value = intent.x > 0 ? Facing::Direction::East : Facing::Direction::West;
+            else
+                facing.value = intent.y > 0 ? Facing::Direction::South : Facing::Direction::North;
         }
+
+        // Target velocity
+        glm::vec2 targetVelocity = 
+            intent * moveStats.max_speed;
 
         // Acceleration
-        float accelerationX = mov.value.x * stats.acceleration;
-        float accelerationY = mov.value.y * stats.acceleration;
+        const float rate = (glm::length(moveIntent.value) > 0.f)
+            ? moveStats.acceleration
+            : moveStats.deceleration;
 
-        // Velocity
-        vel.value.x += accelerationX * dt;
-        vel.value.y += accelerationY * dt;
-
-        Vec2 targetVelocity {mov.value.x * stats.max_speed, mov.value.y * stats.max_speed};
-
-        vel.value = approach(
-            vel.value,
+        // Approach
+        velocity.value = approach(
+            velocity.value,
             targetVelocity,
-            stats.acceleration * dt
+            rate * dt
         );
 
-        // Facing
-        if (vel.value.length() > 0.0f) {
-            if (std::abs(vel.value.x) > std::abs(vel.value.y))
-                facing.value = vel.value.x > 0 ? Facing::Direction::East : Facing::Direction::West;
-            else
-                facing.value = vel.value.y > 0 ? Facing::Direction::South : Facing::Direction::North;
-        }
+        // Clamp
+        if (glm::length(velocity.value) < EPSILON)
+            velocity.value = glm::vec2(0.f);
     }
 }

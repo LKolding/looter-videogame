@@ -1,8 +1,7 @@
 #include <engine.hpp>
 
-// --- Engine ---
-
 // Private
+
 void Engine::init_systems() 
 {
 	// Add system(s)
@@ -13,8 +12,8 @@ void Engine::init_systems()
     m_systems.push_back(TextureAnimationSystem);
 }
 
-
 // Public
+
 void Engine::update(const float dt)
 {
     // Iterate through and call all systems
@@ -24,12 +23,10 @@ void Engine::update(const float dt)
 	}
 };
 
-
 void Engine::handle_event() 
 {
     // Input handling
 };
-
 
 void Engine::shutdown() 
 {
@@ -39,24 +36,23 @@ void Engine::shutdown()
 
 // --- Public interface ---
 
+// Construct renderable items from texture.id, position etc.
 std::vector<RenderItem> Engine::get_render_items(void)
 {
     std::vector<RenderItem> items;
     
     using namespace Components;
 
+    // AnimatedTexture
     auto view = m_registry.view<AnimatedTexture, Position>();
-    for (auto entity : view)
+    for (auto [entity, texture, position]: view.each())
     {
-        auto& texture  = view.get<AnimatedTexture>(entity);
-        auto& position = view.get<Position>(entity);
-
         // Add new RenderItem
         items.push_back({
             .id = texture.id,
             .source_x = texture.src_rect.x,
             .source_y = texture.src_rect.y,
-
+    
             .width  = texture.src_rect.w,
             .height = texture.src_rect.h,
         
@@ -65,35 +61,53 @@ std::vector<RenderItem> Engine::get_render_items(void)
         });
     }
     return items;
+
+    // Texture
+    // auto view = m_registry.view<Texture, Position>();
+    // for (auto [entity, texture, position]: view.each())
+    // {
+    //     // Add new RenderItem
+    //     items.push_back({
+    //         .id = texture.id,
+    //         .source_x = texture.src_rect.x,
+    //         .source_y = texture.src_rect.y,
+    
+    //         .width  = texture.src_rect.w,
+    //         .height = texture.src_rect.h,
+        
+    //         .x = position.x,
+    //         .y = position.y
+    //     });
+    // }
+
 }
 
-
-bool Engine::apply_movement(entt::entity e, float dx, float dy)
+// Interface to MovementIntent component
+bool Engine::apply_movement(entt::entity e, const glm::vec2 intent)
 {
     if (!m_registry.valid(e))
         return false;
     
-    // Get reference to Movement component
     using namespace Components;
+
+    // Get reference to MovementIntent component
     MovementIntent* movement = m_registry.try_get<MovementIntent>(e);
     if (!movement)
-    {
         return false;
-    }
 
     // Update it
-    movement->value.x = dx;
-    movement->value.y = dy;
+    movement->value = intent;
 
     return true;
 }
 
 
+/* Entity creation/destruction */
+
 entt::entity Engine::create_entity() 
 {
     return m_registry.create();
 }
-
 
 bool Engine::destroy_entity(entt::entity e) 
 {

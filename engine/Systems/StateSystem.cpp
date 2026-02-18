@@ -6,19 +6,19 @@ void StateSystem(entt::registry& registry, const float dt)
 {
     using namespace Components;
 
-    auto view = registry.view<State, Velocity, MovementIntent>();
+    auto view = registry.view<State, Velocity>();
 
-    for (auto entity : view)
+    
+
+    for(auto [entity, state, vel]: view.each()) 
     {
-        auto& state_component = view.get<State>(entity);
-        auto& velocity_component = view.get<Velocity>(entity);
-        auto& movement_component = view.get<MovementIntent>(entity);
+        std::string text = glm::length(vel.value) > 0.1 ? "Moving\n" : "Standstill\n";
+        std::cout << text;
 
         // Update state based on velocity
-        if (velocity_component.value.length() > 0.2f)
-            state_component.current = State::Type::Moving;
+        if (glm::length(vel.value) > 0.f)
+            state.current = State::Type::Moving;
         else
-            state_component.current = State::Type::Idle;
-
+            state.current = State::Type::Idle;
     }
 }

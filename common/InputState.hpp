@@ -1,15 +1,16 @@
 #pragma once
 
+#include <glm/glm.hpp>
+
 struct InputState 
 {
 	// movement
-	float moveX;
-	float moveY;
+	glm::vec2 move_intent;
 	bool is_sprinting;
 
 	// view direction/aim
-	float lookX;
-	float lookY;
+	float mouseX;
+	float mouseY;
 
 	// shoot
 	bool player_did_shoot;

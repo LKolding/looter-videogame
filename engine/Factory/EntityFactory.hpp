@@ -16,6 +16,6 @@ private:
 public:
 	EntityFactory(Engine& engine) : m_engine_pointer(&engine) {};
 
-	entt::entity spawnPlayerEntity(entt::entity, float x, float y);
+	void spawnPlayerEntity(entt::entity, float x, float y);
 
 };

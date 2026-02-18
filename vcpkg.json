@@ -9,7 +9,9 @@
       "features": [ "png" ]
     },
     "entt",
-    "nlohmann-json"
+    "nlohmann-json",
+    "box2d",
+    "glm"
   ],
   "builtin-baseline": "5422eb983d4ca8bc4851ac9771d6e74554efc5c8"
 }

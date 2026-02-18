@@ -5,26 +5,26 @@
 #include "../common/InputState.hpp"
 
 
-enum INPUT_TYPE {
+enum class InputType 
+{
 	CNTRL, // controller/gamepad
 	KBM	   // keyboard & mouse
 };
 
 
-class InputManager {
+class InputManager 
+{
 private:
-	INPUT_TYPE selected_input = KBM;
+	InputType selected_input = InputType::KBM;
+	InputState current_input_state;
 
 public:
 	//bool change_input_type(INPUT_TYPE new_input_type);
 	void update();
+	const InputState& get_input_state();
 
 private:
 	InputState handle_kbm();
 	InputState handle_cntrl();
-
-	InputState current_input_state;
-public:
-	InputState& get_input_state();
 
 };
