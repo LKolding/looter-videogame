@@ -32,16 +32,16 @@ void VelocitySystem(entt::registry& registry, const float dt)
             intent = glm::normalize(intent);
 
         // Facing (update based on intent)
-        if (glm::length(intent) > 0.f) {
+        if (glm::length(intent) > 0.f) 
+        {
             if (std::abs(intent.x) > std::abs(intent.y))
-                facing.value = intent.x > 0 ? Facing::Direction::East : Facing::Direction::West;
+                facing.value = intent.x > 0 ? Direction::East : Direction::West;
             else
-                facing.value = intent.y > 0 ? Facing::Direction::South : Facing::Direction::North;
+                facing.value = intent.y > 0 ? Direction::South : Direction::North;
         }
 
         // Target velocity
-        glm::vec2 targetVelocity = 
-            intent * moveStats.max_speed;
+        glm::vec2 targetVelocity = intent * moveStats.max_speed;
 
         // Acceleration
         const float rate = (glm::length(moveIntent.value) > 0.f)

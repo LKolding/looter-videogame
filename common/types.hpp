@@ -1,80 +1,24 @@
 #pragma once
 
-struct Vec2
+// Matches sprite sheet row order (crucial for animation)
+// 0 = South, 1 = West, 2 = East, 3 = North
+enum class Direction : uint8_t
 {
-    float x;
-    float y;
+    South = 0,
+    West  = 1,
+    East  = 2,
+    North = 3
+};
+namespace std {
+template<> struct hash<Direction> {
+    size_t operator()(Direction d) const noexcept { return static_cast<size_t>(d); }
+};
+}
 
-    // Constructors
-    constexpr Vec2() noexcept : x(0.0f), y(0.0f) {}
-    constexpr Vec2(float x_, float y_) : x(x_), y(y_) {}
 
-    // Basic arithmetic
-    constexpr Vec2 operator+(const Vec2& other) const noexcept
-    {
-        return { x + other.x, y + other.y };
-    }
-
-    constexpr Vec2 operator-(const Vec2& other) const noexcept
-    {
-        return { x - other.x, y - other.y };
-    }
-
-    constexpr Vec2 operator*(float scalar) const noexcept
-    {
-        return { x * scalar, y * scalar };
-    }
-
-    constexpr Vec2 operator/(float scalar) const noexcept
-    {
-        return { x / scalar, y / scalar };
-    }
-
-    Vec2& operator+=(const Vec2& other) noexcept
-    {
-        x += other.x;
-        y += other.y;
-        return *this;
-    }
-
-    Vec2& operator-=(const Vec2& other) noexcept
-    {
-        x -= other.x;
-        y -= other.y;
-        return *this;
-    }
-
-    Vec2& operator*=(float scalar) noexcept
-    {
-        x *= scalar;
-        y *= scalar;
-        return *this;
-    }
-
-    Vec2& operator/=(float scalar) noexcept
-    {
-        x /= scalar;
-        y /= scalar;
-        return *this;
-    }
-
-    // Magnitude
-    float length() const noexcept
-    {
-        return std::sqrt(x * x + y * y);
-    }
-
-    float lengthSquared() const noexcept
-    {
-        return x * x + y * y;
-    }
-
-    // Normalize (safe)
-    Vec2 normalized() const noexcept
-    {
-        float len = length();
-        if (len == 0.0f)
-            return {0.0f, 0.0f};
-        return { x / len, y / len };
-    }
+enum class State : uint8_t 
+{ 
+    Moving=0, 
+    Idle=1, 
+    Attacking=2 
 };

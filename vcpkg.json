@@ -11,7 +11,15 @@
     "entt",
     "nlohmann-json",
     "box2d",
-    "glm"
+    "glm",
+    "imgui",
+    {
+      "name": "imgui",
+      "features": [
+        "sdl3-binding",
+        "sdl3-renderer-binding"
+      ]
+    }
   ],
   "builtin-baseline": "5422eb983d4ca8bc4851ac9771d6e74554efc5c8"
 }

@@ -2,7 +2,6 @@
 
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
-#include <nlohmann/json.hpp>
 
 #include <unordered_map>
 #include <filesystem>
@@ -10,10 +9,13 @@
 #include <iostream> //debug
 
 #include "../common/TextureID.hpp"
-#include "../common/AnimationClip.hpp"
+#include "../common/Animation.hpp"
+#include "../common/types.hpp"
+
+#include "../utils/json_functions.hpp"
 
 
-class TextureManager 
+class ResourceManager 
 {
 private:
 	SDL_Renderer* m_renderer = nullptr;
@@ -24,11 +26,12 @@ private:
 	// Textures
 	TextureID m_nextID = 1;
 	std::unordered_map<TextureID, SDL_Texture*> m_textures;//<- textures live here
+
 	std::unordered_map<std::string, TextureID>  m_textureID_by_filename;
 	std::unordered_map<TextureID, AnimationSet> m_animation_sets;
 
 	TextureID addTexture(const std::filesystem::path filename);
-	void addAnimationSet(const AnimationSet set, TextureID id);
+	void addAnimationSet(TextureID id, AnimationSet set);
 
 	bool load_textures();
 	bool load_animations();
@@ -42,7 +45,5 @@ public:
 
 	AnimationSet* getAnimationSet(const TextureID id);
 	std::unordered_map<TextureID, AnimationSet>& getAnimationSets(void);
-
-	
 
 };

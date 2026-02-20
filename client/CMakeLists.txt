@@ -4,17 +4,19 @@ add_library(client STATIC
     "main.cpp"
     "game.cpp"
     "client.cpp"
+    "gui.cpp"
 
-    "Managers/TextureManager.cpp"
+    "Managers/ResourceManager.cpp"
     "Managers/InputManager.cpp"
 )
 
 # Find packages from vcpkg
 find_package(SDL3 CONFIG REQUIRED)
 find_package(SDL3_image CONFIG REQUIRED)
+find_package(imgui CONFIG REQUIRED)
 
 # Game depends on engine and SDL
-target_link_libraries(client PRIVATE engine SDL3::SDL3 $<IF:$<TARGET_EXISTS:SDL3_image::SDL3_image-shared>,SDL3_image::SDL3_image-shared,SDL3_image::SDL3_image-static>)
+target_link_libraries(client PRIVATE engine SDL3::SDL3 $<IF:$<TARGET_EXISTS:SDL3_image::SDL3_image-shared>,SDL3_image::SDL3_image-shared,SDL3_image::SDL3_image-static> imgui::imgui)
 
 # Include engine headers
 target_include_directories(client PRIVATE ../engine)

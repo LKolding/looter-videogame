@@ -3,7 +3,7 @@
 
 # Add source as library 
 add_library (engine STATIC 
-	  "engine.cpp"
+	  "ECS.cpp"
 
     "Systems/Physics/VelocitySystem.cpp"
     "Systems/Physics/PositionSystem.cpp"

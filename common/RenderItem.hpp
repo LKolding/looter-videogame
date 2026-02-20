@@ -1,6 +1,8 @@
 #pragma once
 
+#include "../common/types.hpp"
 #include "../common/TextureID.hpp"
+
 
 struct RenderItem 
 {
@@ -14,5 +16,6 @@ struct RenderItem
 	float x;
 	float y;
 
-	int8_t facing;
+	Direction facing;
+	State state;
 };

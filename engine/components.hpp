@@ -6,7 +6,7 @@
 
 #include "../common/types.hpp"
 #include "../common/TextureID.hpp"
-#include "../common/AnimationClip.hpp"
+#include "../common/Animation.hpp"
 
 
 namespace Components
@@ -25,16 +25,29 @@ namespace Components
 
 	struct Facing
 	{
-		// Matches sprite sheet row order (crucial for animation)
-		// 0 = South, 1 = West, 2 = East, 3 = North
-		enum class Direction : uint8_t
-		{
-			South = 0,
-			West  = 1,
-			East  = 2,
-			North = 3
-		};
 		Direction value = Direction::South;
+
+		inline std::string to_string(void)
+		{
+			switch(this->value)
+			{
+				case Direction::South:
+					return {"south"};
+					break;
+
+				case Direction::East:
+					return {"east"};
+					break;
+
+				case Direction::West:
+					return {"west"};
+					break;
+
+				case Direction::North:
+					return {"north"};
+					break;
+			}
+		}
 	};
 
 	struct MovementIntent
@@ -49,10 +62,9 @@ namespace Components
 		float max_speed = 250.0f;
 	};
 
-	struct State
+	struct StateComponent
 	{
-        enum class Type : uint8_t { Moving=0, Idle=1, Attacking=2 };
-        Type current = Type::Idle;
+        State current = State::Idle;
     };
 
 	struct Texture
@@ -72,12 +84,12 @@ namespace Components
 
 	struct AnimationClipReference
 	{
-		AnimationClip& ref;
+		AnimationClip* ref = nullptr;
 	};
 
 	struct AnimationSetsReference
 	{
-		const std::unordered_map<TextureID, AnimationSet>& ref; 
+		std::unordered_map<TextureID, AnimationSet>& ref; 
 	};
 
 }

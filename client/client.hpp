@@ -2,22 +2,29 @@
 
 // Vendor
 #include <SDL3/SDL.h>
+#include <entt/entt.hpp>
 #include <iostream>
+
+#include "imgui.h"
+#include "imgui_impl_sdl3.h"
+#include "imgui_impl_sdlrenderer3.h"
+
 // My stuff
-#include "Managers/TextureManager.hpp"
+#include "Managers/ResourceManager.hpp"
 #include "Managers/InputManager.hpp"
 
 #include "components.hpp"
 #include "../common/RenderItem.hpp"
 
 #include "camera.hpp"
+#include "gui.hpp"
 
 
 class Client 
 {
 private:
-    TextureManager m_textureManager;
-    InputManager m_inputManager;
+    ResourceManager m_ResourceManager;
+    InputManager m_InputManager;
 
     const int m_logical_render_width  = 960;
     const int m_logical_render_height = 540;
@@ -35,16 +42,25 @@ public:
     {
         this->sdl_init(_width, _height);
         this->m_camera.m_position = glm::vec2(0,0);
+        this->m_camera.m_zoom = 0.5;
     }
     
     void update(void);
-    bool render(std::vector<RenderItem> items);
+
+    bool render_sprites(std::vector<RenderItem> sprites);
+
+    bool render(std::vector<RenderItem> sprites, entt::registry& registry);
+
+    bool render_ui(entt::registry& registry);
 
     // Managers
-    TextureManager& get_texture_manager(void);
+    ResourceManager& get_resource_manager(void);
 
     // Input
     InputState get_current_input();
+
+    // Setter/getter/interface
+    std::pair<float, float> get_window_scale_factor() const;
 
 private:
     bool sdl_init(const int _width, const int _height);

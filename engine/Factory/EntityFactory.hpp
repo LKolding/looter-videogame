@@ -4,17 +4,17 @@
 #include <entt/entt.hpp>
 
 #include "components.hpp"
-#include "engine.hpp"  // for .createEntity()
+#include "ECS.hpp"
 
-#include "../common/AnimationClip.hpp"
+#include "../common/Animation.hpp"
 
 
 class EntityFactory {
 private:
-	Engine* m_engine_pointer;
+	ECS* m_engine_pointer;
 
 public:
-	EntityFactory(Engine& engine) : m_engine_pointer(&engine) {};
+	EntityFactory(ECS& engine) : m_engine_pointer(&engine) {};
 
 	void spawnPlayerEntity(entt::entity, float x, float y);
 

@@ -10,7 +10,7 @@
 #include <entt/entt.hpp>
 
 // Components
-#include <components.hpp>
+#include "components.hpp"
 
 // Systems
 #include "Systems/Physics/VelocitySystem.hpp"
@@ -25,31 +25,37 @@
 #include "../common/RenderItem.hpp"
 
 
-// --- Engine ---
-class Engine {
+/* ECS Engine */
+/* 
+	(entt wrapper)
+	Contains EnTT registry, methods to convert
+	Entities into Sprites and systems(tm) 
+	to operate on Components, 
+*/
+class ECS {
 private:
 	void init_systems();  // called by constructor
 
-	// EnTT
+	// EnTT registry
 	entt::registry m_registry;
 	std::vector<std::function<void(entt::registry&, const float dt)>> m_systems;
 
 public:
-	Engine()
+	ECS()
 	{
 		this->init_systems();
 	}
 
-	void update(const float dt); // called by AppIterate
-	void handle_event();		 // called by AppEvent
-	void shutdown();			 // called by AppQuit
+	void update(const float dt);
+	void handle_event();
+	void shutdown();
 
-	// Rendering of internal entities
-	std::vector<RenderItem> get_render_items(void);
+	// Rendering of entities
+	auto get_render_items(void) const -> std::vector<RenderItem>;
+
 
 // --- PUBLIC INTERFACE
 public:
-
 	// Movement/transforms
 	bool apply_movement(entt::entity e, const glm::vec2 intent);
 
@@ -58,7 +64,9 @@ public:
 	bool destroy_entity(entt::entity);
 
 
-	// Entity Factory functions (use with caution)
+	/* EnTT interaction functions (use with caution) */
+
+	entt::registry& get_registry(void);
 
 	template<typename T, typename... Args>
 	T& add_component(entt::entity e, Args&&... args) {
@@ -68,10 +76,11 @@ public:
 	template<typename T>
 	bool remove_component(entt::entity e)
 	{
-		if (m_registry.remove<T>(e))
-			return true;
-		else
+		if (!m_registry.any_of<T>(e))
 			return false;
+
+		m_registry.remove<T>(e);
+		return true;
 	}
 
 	template<typename T>
@@ -79,5 +88,4 @@ public:
 	{
 		return m_registry.try_get<T>(e);
 	}
-
 };

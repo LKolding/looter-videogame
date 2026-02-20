@@ -31,7 +31,7 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char** argv)
     *appstate = new AppData{};
     auto* data = static_cast<AppData*>(*appstate);
     SDL_SetAppMetadata("Looter arcade", "1.0", "com.lkolding.looter");
-    data->game.start_game();
+    data->game.init();
     return SDL_APP_CONTINUE; /* carry on */
 }
 
@@ -50,6 +50,8 @@ SDL_AppResult SDL_AppIterate(void* appstate)
 SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event)
 {
     auto* data = static_cast<AppData*>(appstate);
+
+    data->game.handle_event(event);
 
     if (event->type == SDL_EVENT_QUIT) {
         if (!data->game.quit())
