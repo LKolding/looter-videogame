@@ -8,8 +8,8 @@ void ECS::init_systems()
 	m_systems.push_back(VelocitySystem);
     m_systems.push_back(PositionSystem);
     m_systems.push_back(StateSystem);
-    m_systems.push_back(StateAnimationSystem);
-    m_systems.push_back(TextureAnimationSystem);
+    m_systems.push_back(AnimationSystem);
+    m_systems.push_back(AnimationTimeSystem);
 }
 
 // Public

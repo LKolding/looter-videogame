@@ -3,7 +3,6 @@
 
 /* --- Private --- */
 
-
 bool Client::sdl_init(const int _width, const int _height) 
 {
     /* SDL */
@@ -34,42 +33,41 @@ bool Client::sdl_init(const int _width, const int _height)
     // Setup scaling
     // ImGuiStyle& style = ImGui::GetStyle();
     // style.ScaleAllSizes(0.6f);        // Bake a fixed style scale. (until we have a solution for dynamic style scaling, changing this requires resetting Style + calling this again)
-
+    
     /* Resource Manager */
     m_ResourceManager.register_renderer(m_renderer);
     m_ResourceManager.init();
+    
+    return true;
+}    
 
+bool Client::render_ui(entt::registry& registry)
+{
+    /* ImGUI */
+    draw_view(m_window, m_renderer, m_logical_render_width, m_logical_render_height, registry);
     return true;
 }
-
-
-/* --- Public --- */
-
-void Client::update(void) 
-{
-    m_InputManager.update();
-}
-
 
 bool Client::render_sprites(std::vector<RenderItem> sprites)
 {
     // Iterate renderables
     for (auto sprite : sprites)
     {
+        
         // Check if texture is valid
         SDL_Texture* texture = m_ResourceManager.getTexture(sprite.id);
         if (!texture)
         {
             std::cout << "Error: Texture with id " << sprite.id << " does not exist.\n";
             continue;
-        }
+        }    
 
-        const float height = sprite.height * 2;
-        const float width  = sprite.width  * 2;
+        const float height = sprite.height * 2.f;
+        const float width  = sprite.width  * 2.f;
 
         // Offset x & y by texture size * 0.5
-        const float x_offset = width * 0.5;
-        const float y_offset = height* 0.5;
+        const float x_offset = width * 0.5f;
+        const float y_offset = height* 0.5f;
 
         // Apply offset
         const float x = sprite.x - x_offset;
@@ -93,9 +91,17 @@ bool Client::render_sprites(std::vector<RenderItem> sprites)
         // "Hitbox"
         SDL_SetRenderDrawColorFloat(m_renderer, 0.0f, 1.0f, 0.0f, 1.0f);
         SDL_RenderRect(m_renderer, &dst_rect);
-    }
+    }    
     return true;
-}
+}    
+
+
+/* --- Public --- */
+
+void Client::update(void) 
+{
+    m_InputManager.update();
+}    
 
 bool Client::render(std::vector<RenderItem> sprites, entt::registry& registry)
 {
@@ -109,15 +115,7 @@ bool Client::render(std::vector<RenderItem> sprites, entt::registry& registry)
     /* Apply renditions */
     SDL_RenderPresent(m_renderer);
     return true;
-}
-
-bool Client::render_ui(entt::registry& registry)
-{
-    /* ImGUI */
-    draw_view(m_window, m_renderer, m_logical_render_width, m_logical_render_height, registry);
-    return true;
-}
-
+}    
 
 
 ResourceManager& Client::get_resource_manager(void)

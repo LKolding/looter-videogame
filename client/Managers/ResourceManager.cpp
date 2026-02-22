@@ -1,8 +1,73 @@
 #include "ResourceManager.hpp"
 
-// ------------------
-// ----- Public -----
-// ------------------
+
+// -------------------------
+// ----- SpriteManager -----
+// -------------------------
+
+/* Getters*/
+
+const SpriteDefinition* Sprites::getSpriteDefinition(SpriteDefinitionID id)
+{
+	auto it = m_definitions.find(id);
+	if (it != m_definitions.end())
+	{
+		return &m_definitions.at(id);
+	}
+	return nullptr;
+};
+const AnimationSet* Sprites::getAnimationSet(TextureID id)
+{
+	auto it = m_animation_sets.find(id);
+	if (it != m_animation_sets.end())
+	{
+		return &m_animation_sets.at(id);
+	}
+	return nullptr;
+};
+const TextureID* Sprites::getTextureIDByState(SpriteDefinitionID id, State state)
+{
+	// locate definition
+	auto it = m_definitions.find(id);
+	if (it == m_definitions.end())
+	{
+		return nullptr; //<- fail
+	}
+	// locate texture
+	auto it2= it->second.state_to_texture.find(state);
+	if (it2 == it->second.state_to_texture.end())
+	{
+		return nullptr; //<- fail
+	}
+	return &it2->second; // return texture id
+};
+
+// [ ! ] Caution | Returns the actual underlying map
+std::unordered_map<TextureID, AnimationSet>& Sprites::get_all_sets(void)
+{
+	return this->m_animation_sets;
+}
+
+
+/* Setters */
+
+bool Sprites::addAnimationSet(TextureID id, AnimationSet& set)
+{
+	auto it = m_animation_sets.find(id);
+	if (it == m_animation_sets.end())
+	{
+		m_animation_sets[id] = set;
+		return true;
+	}
+	return false;
+}
+
+
+// ---------------------------
+// ----- ResourceManager -----
+// ---------------------------
+
+// --- Public ---
 
 /* Initialization */
 
@@ -15,17 +80,16 @@ void ResourceManager::init(void)
 {
 	if (!this->m_renderer)
 	{
-		std::cout << "Renderer not found!\n";
+		throw std::runtime_error("Renderer not found!");
 	}
 
 	if (!this->load_textures())
 	{
-		std::cout << "Couldn't load textures\n";
+		throw std::runtime_error("Couldn't load textures!");
 	}
 
 	this->load_animations(); // <- read json
 }
-
 
 /* Textures */
 
@@ -37,8 +101,8 @@ SDL_Texture* ResourceManager::getTexture(const TextureID id)
 
 SDL_Texture* ResourceManager::getTexture(const std::string filename)
 {
-	auto it = m_textureID_by_filename.find(filename);
-	if (it != m_textureID_by_filename.end())
+	auto it = m_textureID_from_filename.find(filename);
+	if (it != m_textureID_from_filename.end())
 	{
 		const TextureID texture_id = it->second;
 		return m_textures.at(texture_id);
@@ -46,24 +110,20 @@ SDL_Texture* ResourceManager::getTexture(const std::string filename)
 	return nullptr;
 }
 
-
 /* Animations */
 
 AnimationSet* ResourceManager::getAnimationSet(const TextureID id)
 {
-	auto it = m_animation_sets.find(id);
-	return (it != m_animation_sets.end()) ? &it->second : nullptr;
+	return const_cast<AnimationSet*>(m_spriteManager.getAnimationSet(id));
 }
 
+// [ ! ] Caution | Returns the actual underlying map
 std::unordered_map<TextureID, AnimationSet>& ResourceManager::getAnimationSets(void)
 {
-	return m_animation_sets;
+	return m_spriteManager.get_all_sets();
 }
 
-
-// -------------------
-// ----- Private -----
-// -------------------
+// --- Private ---
 
 /* Textures */
 
@@ -87,7 +147,7 @@ bool ResourceManager::load_textures()
 			continue;
 		}
 		// Store filename -> id mapping for later retrieval of animation clips
-		this->m_textureID_by_filename[file.stem()] = id;
+		this->m_textureID_from_filename[file.stem()] = id;
 	}
 	return true;
 }
@@ -116,12 +176,11 @@ TextureID ResourceManager::addTexture(const std::filesystem::path filename)
 	return this->m_nextID - 1; // return ID of _current_ texture
 }
 
-
 /* Animations */
 
 bool ResourceManager::load_animations()
 {
-	for (const auto& [filename, id] : this->m_textureID_by_filename)
+	for (const auto& [filename, id] : this->m_textureID_from_filename)
 	{
 		// Read json [ nlohmann ]
 		auto filename_with_ext = filename + ".json";
@@ -129,13 +188,13 @@ bool ResourceManager::load_animations()
 		if (!std::filesystem::exists(full_file_path))
 			continue; //<- skip
 		
-		nlohmann::json data = load_json(full_file_path);
+		nlohmann::json json_data = load_json(full_file_path);
 
-		auto& frames = data.at("frames");
-		auto& meta = data.at("meta");
+		auto& frames = json_data.at("frames");
+		auto& meta = json_data.at("meta");
 
 
-		// Read all frames into a vector of pairs
+		// Read _all_ frames into a vector of pairs
 		std::vector<std::pair<std::string, AnimationFrame>> all_frames_with_keys;
 		for (auto& [key, frame] : frames.items())
 		{
@@ -164,51 +223,38 @@ bool ResourceManager::load_animations()
 			all_frames.push_back(frame);
 
 
-			
-		// List of AnimationClip(s) containing Facing->Frames
 		AnimationSet animation_set; // one per texture
 
 		// Read meta data
-		for (auto& animation_data : meta.at("frameTags"))
+		for (auto& animation_json : meta.at("frameTags"))
 		{
-			auto& temp = animation_data;
+			auto& temp = animation_json;
 
 			AnimationClip _clip;
 			_clip.frames = std::vector(
-				all_frames.begin() + animation_data["from"].get<size_t>(),
-				all_frames.begin() + animation_data["to"].get<size_t>() + 1
+				all_frames.begin() + animation_json["from"].get<size_t>(),
+				all_frames.begin() + animation_json["to"].get<size_t>() + 1
 			);
 			// Determine facing direction
 			Direction direction;
-			std::string facing = animation_data["name"].get<std::string>();
+			std::string facing = animation_json["name"].get<std::string>();
 			if (facing == "south")
-			{
 				direction = Direction::South;
-			}
 			else if (facing == "north")
-			{
 				direction = Direction::North;
-			}
 			else if (facing == "west")
-			{
 				direction = Direction::West;
-			}
 			else if (facing == "east")
-			{
 				direction = Direction::East;
-			}
+
 			// Store animation
-			animation_set._animations.try_emplace(direction, std::move(_clip));
+			animation_set.clips.try_emplace(direction, std::move(_clip));
 		}
-		// Apply
-		this->addAnimationSet(id, animation_set);
+		// Store animation set
+		if (!m_spriteManager.addAnimationSet(id, animation_set))
+		{
+			throw std::runtime_error("Couldn't store animation set!");
+		}
 	}
 	return true;
-}
-
-
-
-void ResourceManager::addAnimationSet(TextureID id, AnimationSet set) 
-{
-	m_animation_sets[id] = std::move(set);
 }

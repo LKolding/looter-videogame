@@ -1,7 +1,7 @@
-#include "Systems/TextureAnimationSystem.hpp"
+#include "Systems/AnimationTimeSystem.hpp"
 
 
-void TextureAnimationSystem(entt::registry& registry, const float dt) 
+void AnimationTimeSystem(entt::registry& registry, const float dt) 
 {
     using namespace Components;
 
@@ -9,7 +9,7 @@ void TextureAnimationSystem(entt::registry& registry, const float dt)
 
     for (auto [entity, texture, clip]: view.each())
     {
-        // Update time_passed (should use a timestamp instead)
+        // Update time_passed (should use a timestamp instead?)
         texture.time_passed += dt;
         // Get frame
         const auto& frame = clip.ref->frames.at(texture.current_frame_index);

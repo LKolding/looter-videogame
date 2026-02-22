@@ -15,6 +15,32 @@
 #include "../utils/json_functions.hpp"
 
 
+struct SpriteDefinition
+{
+	std::unordered_map<State, TextureID> state_to_texture;
+};
+
+
+/* Sprite Manager */
+class Sprites
+{
+private:
+	std::unordered_map<SpriteDefinitionID, SpriteDefinition> m_definitions;
+	std::unordered_map<TextureID, AnimationSet> m_animation_sets;
+
+public:
+	const SpriteDefinition* getSpriteDefinition(SpriteDefinitionID id);
+	const AnimationSet* getAnimationSet(TextureID id);
+	const TextureID* getTextureIDByState(SpriteDefinitionID id, State state);
+
+	// [ ! ] Caution | Returns the actual underlying map
+	std::unordered_map<TextureID, AnimationSet>& get_all_sets(void);
+
+	bool addAnimationSet(TextureID id, AnimationSet& set);
+};
+
+
+/* Resource Manager */
 class ResourceManager 
 {
 private:
@@ -26,12 +52,13 @@ private:
 	// Textures
 	TextureID m_nextID = 1;
 	std::unordered_map<TextureID, SDL_Texture*> m_textures;//<- textures live here
+	std::unordered_map<std::string, TextureID>  m_textureID_from_filename;
 
-	std::unordered_map<std::string, TextureID>  m_textureID_by_filename;
-	std::unordered_map<TextureID, AnimationSet> m_animation_sets;
-
+	// SpriteManager
+	Sprites m_spriteManager;
+	
+	
 	TextureID addTexture(const std::filesystem::path filename);
-	void addAnimationSet(TextureID id, AnimationSet set);
 
 	bool load_textures();
 	bool load_animations();
@@ -41,9 +68,8 @@ public:
 	void init(void);
 
 	SDL_Texture* getTexture(const TextureID id);
-	SDL_Texture* getTexture(const std::string filename);//without extension
+	SDL_Texture* getTexture(const std::string filename);//filename _without_ extension
 
 	AnimationSet* getAnimationSet(const TextureID id);
 	std::unordered_map<TextureID, AnimationSet>& getAnimationSets(void);
-
 };

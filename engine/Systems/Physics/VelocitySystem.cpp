@@ -10,9 +10,9 @@ glm::vec2 approach(
     const float maxDelta)
 {
     glm::vec2 delta = target - current;
-    float dist = delta.length();
+    float dist = glm::length(delta);
 
-    if (dist <= maxDelta || dist == 0.0f)
+    if (dist <= maxDelta || dist == 0.f)
         return target;
 
     return current + delta / dist * maxDelta;

@@ -13,11 +13,11 @@ struct AnimationFrame
     int w;
     int h;
 
-    int duration; //miliseconds
+    int duration; //milliseconds
 };
 
 
-struct AnimationClip // one for each "facing"
+struct AnimationClip // one for each facing
 {
     std::vector<AnimationFrame> frames;
 };
@@ -25,6 +25,6 @@ struct AnimationClip // one for each "facing"
 
 struct AnimationSet // one for each texture
 {
-    std::unordered_map<Direction, AnimationClip> _animations;
+    std::unordered_map<Direction, AnimationClip> clips;
 };
 

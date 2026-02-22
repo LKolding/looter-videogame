@@ -1,5 +1,7 @@
 #include "gui.hpp"
 
+
+/* To begin with, one must call this */
 void start_gui_draw(SDL_Window* window, SDL_Renderer* renderer)
 {
     // Switch to window space for ImGui
@@ -15,6 +17,7 @@ void start_gui_draw(SDL_Window* window, SDL_Renderer* renderer)
     ImGui::NewFrame();
     ImGui::Begin("Debug");
 }
+/* Afterwards you draw whatever, and call this function to end */
 void end_gui_draw(SDL_Renderer* renderer, const int logical_width, const int logical_height)
 {
     ImGui::End();
@@ -26,54 +29,13 @@ void end_gui_draw(SDL_Renderer* renderer, const int logical_width, const int log
 }
 
 
-void draw_positions(
-    SDL_Window* window, 
-    SDL_Renderer* renderer, 
-    const int logical_width, 
-    const int logical_height, 
-    std::vector<std::pair<entt::entity, Components::Position>> positions)
-{
-    start_gui_draw(window, renderer);
-
-    ImGui::TextColored(ImVec4(1,1,0,1), "Positions");
-    ImGui::BeginChild("Scrolling");
-    for (auto& entry : positions)
-    {
-        ImGui::Text("Entity: %i | pos: (%.f, %.f)", entry.first, entry.second.x, entry.second.y);
-    }
-    ImGui::EndChild();
-
-    end_gui_draw(renderer, logical_width, logical_height);
-}
-
-void draw_states(
-    SDL_Window* window, 
-    SDL_Renderer* renderer, 
-    const int logical_width, 
-    const int logical_height, 
-    std::vector<std::pair<entt::entity, Components::StateComponent&>> states)
-{
-    start_gui_draw(window, renderer);
-
-    ImGui::TextColored(ImVec4(1,1,0,1), "States");
-    ImGui::BeginChild("Scrolling");
-    for (auto& entry : states)
-    {
-        ImGui::Text("Entity: %i | %i", entry.first, entry.second.current);
-    }
-    ImGui::EndChild();
-
-    end_gui_draw(renderer, logical_width, logical_height);
-}
-
-
 void draw_view(SDL_Window* window, SDL_Renderer* renderer, const int logical_width, const int logical_height, entt::registry& registry)
 {
     /* Init ImGui */
     start_gui_draw(window, renderer);
 
-    const int PANEL_SIZE = 80;
 
+    const int PANEL_SIZE = 80;
 
     /* Positions */
     ImGui::TextColored(ImVec4(1,1,0,1), "Position");
@@ -85,6 +47,15 @@ void draw_view(SDL_Window* window, SDL_Renderer* renderer, const int logical_wid
     }
     ImGui::EndChild();
 
+    /* Velocity */
+    ImGui::TextColored(ImVec4(1,1,0,1), "Velocity");
+    ImGui::BeginChild("Velocity", ImVec2(0, PANEL_SIZE), true);
+    auto view5 = registry.view<Components::Velocity>();
+    for (auto [entity, velocity] : view5.each())
+    {
+        ImGui::Text("%i | (%0.f, %0.f)", entity, velocity.value.x, velocity.value.y);
+    }
+    ImGui::EndChild();
 
     /* Facing */
     ImGui::TextColored(ImVec4(1,1,0,1), "Facing");

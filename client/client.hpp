@@ -42,26 +42,19 @@ public:
     {
         this->sdl_init(_width, _height);
         this->m_camera.m_position = glm::vec2(0,0);
-        this->m_camera.m_zoom = 0.5;
+        this->m_camera.m_zoom = 1.f;
     }
     
     void update(void);
-
-    bool render_sprites(std::vector<RenderItem> sprites);
-
     bool render(std::vector<RenderItem> sprites, entt::registry& registry);
 
-    bool render_ui(entt::registry& registry);
-
-    // Managers
     ResourceManager& get_resource_manager(void);
-
-    // Input
     InputState get_current_input();
 
-    // Setter/getter/interface
     std::pair<float, float> get_window_scale_factor() const;
 
 private:
+    bool render_sprites(std::vector<RenderItem> sprites);
+    bool render_ui(entt::registry& registry);
     bool sdl_init(const int _width, const int _height);
 };

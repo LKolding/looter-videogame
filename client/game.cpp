@@ -11,18 +11,18 @@ entt::entity spawn_player_entity(ECS& engine, Client& client, EntityFactory& fac
     Components::AnimatedTexture* texture_component = engine.get_component<Components::AnimatedTexture>(player_entity);
     if (!texture_component)
     {
-        std::runtime_error("Texture missing!");
+        throw std::runtime_error("Texture missing!");
     }
     
     // Get animation set
     AnimationSet* set_ptr = client.get_resource_manager().getAnimationSet(texture_component->id);
     if (!set_ptr)
     {
-        std::runtime_error("AnimationSet missing!");
+        throw std::runtime_error("AnimationSet missing!");
     }
 
     // Get ptr to AnimationClip
-    AnimationClip* clipRef = &set_ptr->_animations.at(Direction::North);
+    AnimationClip* clipRef = &set_ptr->clips.at(Direction::North);
     
     // Apply
     engine.add_component<Components::AnimationClipReference>(player_entity, clipRef);
@@ -33,7 +33,7 @@ entt::entity spawn_player_entity(ECS& engine, Client& client, EntityFactory& fac
 
 
 // ---------------------
-// ----- namespace -----
+// ----- Namespace -----
 // ---------------------
 
 namespace looter
@@ -74,7 +74,7 @@ void Game::logic(float dt)
     client.update();
 
     // Sync Camera with player entity position
-    //looter::sync_camera_position(engine, client, looter::player_entity);
+    looter::sync_camera_position(engine, client, looter::player_entity);
 
     // Render
     client.render(engine.get_render_items(), engine.get_registry());

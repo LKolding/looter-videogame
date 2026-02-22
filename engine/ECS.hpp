@@ -17,9 +17,8 @@
 #include "Systems/Physics/PositionSystem.hpp"
 
 #include "Systems/StateSystem.hpp"
-#include "Systems/StateAnimationSystem.hpp"
-
-#include "Systems/TextureAnimationSystem.hpp"
+#include "Systems/AnimationSystem.hpp"
+#include "Systems/AnimationTimeSystem.hpp"
 
 // Common
 #include "../common/RenderItem.hpp"

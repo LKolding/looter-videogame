@@ -1,23 +1,28 @@
-#include "StateAnimationSystem.hpp"
+#include "AnimationSystem.hpp"
 
 
-void StateAnimationSystem(entt::registry& registry, const float dt)
+void AnimationSystem(entt::registry& registry, const float dt)
 {
     using namespace Components;
     
     auto view = registry.view<AnimatedTexture, AnimationClipReference, AnimationSetsReference, StateComponent, Facing>();
 
-    for(auto [entity, texture, clip, sets, state, facing]: view.each()) 
+    for(auto [entity, texture, clip, set, state, facing]: view.each()) 
     {
+        const auto& _set = set.ref.at(texture.id);
+        const auto& _clip = _set.clips.at(facing.value);
+        const auto& current_frame = _clip.frames.at(texture.current_frame_index);
+        
+        const AnimationClip* _clip_ptr = &set.ref.at(texture.id).clips.at(facing.value);
+
         // animation clip
-        if (clip.ref != &sets.ref.at(texture.id)._animations.at(facing.value))
+        if (clip.ref != _clip_ptr)
         {
-            clip.ref = &sets.ref.at(texture.id)._animations.at(facing.value);
+            clip.ref = &set.ref.at(texture.id).clips.at(facing.value);
             texture.current_frame_index = 0; // reset (safety)
         }
-
+        
         // update src_rect
-        const auto& current_frame = clip.ref->frames.at(texture.current_frame_index);
         texture.src_rect = {
             .x = static_cast<float>(current_frame.x),
             .y = static_cast<float>(current_frame.y),

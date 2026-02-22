@@ -92,4 +92,24 @@ namespace Components
 		std::unordered_map<TextureID, AnimationSet>& ref; 
 	};
 
+
+	/* NEW */
+	struct Sprite
+	{
+		SpriteDefinitionID id;
+	};
+
+	struct SpriteState
+	{
+		State value;
+	};
+
+	struct AnimationPlayback
+	{
+		float timer = 0.f;
+		std::size_t frame_index = 0;
+	};
+
+
+
 }
